@@ -57,7 +57,8 @@ chore: vendor WrenAI 548eee3e (sdk/** Apache-2.0) as upstream baseline
 | 修改 | `sdk/wren-langchain/src/wren_langchain/_format.py`（+190 / −62） |
 | 新增 | `sdk/wren-langchain/src/wren_langchain/_budget.py` |
 | 新增 | `sdk/wren-langchain/tests/unit/test_format_budget.py`（25 个测试） |
-| 新增（交付工具，非上游） | `tools/g2_cases.py`、`tools/reproduce_g2.py`、`tools/demo_g2.py` |
+| 新增 | `sdk/wren-langchain/tests/integration/test_content_budget_tool.py`（2 个真实工具层用例） |
+| 新增（交付工具，非上游） | `tools/g2_cases.py`、`tools/reproduce_g2.py`、`tools/demo_g2.py`、`tools/pytest_upstream_format.py` |
 | 新增（交付材料） | `README-G2.md`、`UPSTREAM.md`、`docs/G2-*.md`、`docs/evidence/**` |
 
 未改：`_tools.py`、`_tools_memory.py`、`_envelope.py`、`_toolkit.py`、`wren-pydantic`、Rust `core/**`、依赖清单与版本号。
