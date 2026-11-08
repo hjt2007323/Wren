@@ -36,7 +36,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "F4AD01F9E569E1BC7D60D3CDCD3D9E4E1CDC1D2AC7858C6F27330964A84299CC",
-      "elapsed_ms": 0.075,
       "checks": {
         "cap": true,
         "full_json": true,
@@ -59,7 +58,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "F255BCC279341CF76C373B9E3BF41DAD06C7AD2784395D0FC26ECC272E5FB88F",
-      "elapsed_ms": 0.034,
       "checks": {
         "cap": true,
         "full_json": true,
@@ -85,7 +83,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "4842B947BE7AA6A7DA6E5813F4325001FA2C562CCFD638C8EBC4C676D4982990",
-      "elapsed_ms": 0.011,
       "checks": {
         "cap": true,
         "full_json": true,
@@ -111,7 +108,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "48594EC28C7B25F38CCE876656A39B416E57EAB4DF9CA9E102FEB43C5B71F2B6",
-      "elapsed_ms": 0.036,
       "checks": {
         "cap": true,
         "exact_cap": true
@@ -135,7 +131,6 @@
       "json_ok": false,
       "json_error": "Expecting value: line 1 column 1 (char 0)",
       "content_sha256": "6D1DDAC9EE0670783820128F4685C0E233573BAC53BD554C3C780CBFFB68CC3C",
-      "elapsed_ms": 0.062,
       "checks": {
         "cap": true,
         "over_cap_truncated": true
@@ -159,7 +154,6 @@
       "json_ok": false,
       "json_error": "Expecting value: line 1 column 1 (char 0)",
       "content_sha256": "6D1DDAC9EE0670783820128F4685C0E233573BAC53BD554C3C780CBFFB68CC3C",
-      "elapsed_ms": 0.082,
       "checks": {
         "cap": true,
         "single_row_diag": true
@@ -181,7 +175,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
-      "elapsed_ms": 0.008,
       "checks": {
         "cap": true,
         "empty_plain": true
@@ -203,7 +196,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
-      "elapsed_ms": 0.006,
       "checks": {
         "cap": true,
         "empty_total_diag": false
@@ -229,7 +221,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "02928F333750668AB7655ED54C6D6D69A475D452042A8DE6024E9DC6E5191A50",
-      "elapsed_ms": 17.786,
       "checks": {
         "cap": true,
         "truncated_json": true,
@@ -256,7 +247,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "C822D79AC958A1C23E56F45B5449EE5F5FC9D3119CD590A7DF2F5F7C7FA656D4",
-      "elapsed_ms": 2.424,
       "checks": {
         "cap": true,
         "truncated_json": true,
@@ -283,7 +273,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "09CC44F36F6C36BA85FEAA47054CF48AA2E429C0ADEE3F967B0A949EAAF0310F",
-      "elapsed_ms": 0.016,
       "checks": {
         "cap": true,
         "full_json": true,
@@ -306,7 +295,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "E8C05358E79C8655E3EA783A6A6567718C1CA728ABF24EC569ED23CE76D3D0BF",
-      "elapsed_ms": 0.015,
       "checks": {
         "cap": true,
         "full_json": true,
@@ -332,7 +320,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "E5C3D4104EEA8846435DDE1DE2323F9CCB1AD17AA9B8400464909D03CF69A6E5",
-      "elapsed_ms": 0.001,
       "checks": {
         "cap": true,
         "no_truncation": true
@@ -354,7 +341,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "8BC111A1CCAD9DEA0A078364A3451FF653B0F9CF01CF4338D069066642393FB4",
-      "elapsed_ms": 0.003,
       "checks": {
         "cap": false,
         "dry_plan_marked": false
@@ -379,7 +365,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "A293C525A70A754D7AACFC9D19E3BC26E05DA22B835EE31788EC226EACC54EE2",
-      "elapsed_ms": 0.005,
       "checks": {
         "cap": true,
         "no_truncation": true
@@ -401,7 +386,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "2F58F6852DE48577BDA5B76CB8A148540E82F515CBD6D48FD3AE82737986D389",
-      "elapsed_ms": 0.047,
       "checks": {
         "cap": false,
         "recall_capped": false
@@ -426,7 +410,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "06D4725FA55BA86598D3B250947AA1B92E8B59D5E1AD51D3E9D2EB81824521AA",
-      "elapsed_ms": 0.005,
       "checks": {
         "cap": true,
         "no_truncation": true
@@ -448,7 +431,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "C25C8216449DCD716DECCE09E9A48A77B6E925D93F5CA2486DA38DE95AD94228",
-      "elapsed_ms": 0.156,
       "checks": {
         "cap": false,
         "models_capped": false
@@ -473,7 +455,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "1F087C1D2178D4A0B279EDB13450D2F431E1F9D5ECEE4E7AB02498D8BA918C60",
-      "elapsed_ms": 0.005,
       "checks": {
         "cap": true,
         "no_truncation": true
@@ -495,7 +476,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "6034E7EB0CECF3C38BA7103FC9904C364E909D68C3B8486A20CEAFD9DB6BAA82",
-      "elapsed_ms": 0.01,
       "checks": {
         "cap": true,
         "fetch_capped": true
@@ -517,7 +497,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "A43085883E5619A0B1C492AC593AF03C19F080C871CCFA15DBD2182716FF2A8D",
-      "elapsed_ms": 0.112,
       "checks": {
         "cap": true,
         "fetch_capped": true
@@ -539,7 +518,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "6BCA512F8163BDF496B52F67E562F605E9635F6BFAD80FA74438B40E2114BD7D",
-      "elapsed_ms": 0.003,
       "checks": {
         "cap": true,
         "store_exact": true
@@ -561,7 +539,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "D92F9B8258126ED940924BAF313C53870E56FABD1AB2A144E5860835698AB02D",
-      "elapsed_ms": 0.002,
       "checks": {
         "cap": false,
         "store_capped": false

@@ -16,7 +16,7 @@
 | 1000 行中文（超限） | 135 行 / 14,632 B | 224 行 / 16,313 B | +65.9% 行 |
 | 40 KB `dry_plan` SQL | 43,918 B，无任何“不完整”标记 | 16,346 B，标记 `incomplete … do not execute as-is` | 强制入预算 |
 | 空表 + `total_rows=100` | `[]`，无尾注无 warning | `[]` + `0 of 100 … external count` | 不再误导 |
-| 组件耗时（5000 行 × 6 列，30 次中位数） | 29.1 ms | 10.1 ms | 2.9× 快 |
+| 组件耗时（5000 行 × 6 列，30 次中位数） | 30.0 ms | 9.8 ms | 3.1× 快 |
 
 完整 before/after 见 [docs/G2-交付.md](docs/G2-交付.md) 与 `docs/evidence/`。
 
@@ -53,7 +53,7 @@ SHA256 `CEA7814E…`），`after` 侧加载工作树里的真实模块。
 sdk/wren-langchain/src/wren_langchain/_budget.py     # 新增：共享 UTF-8 字节预算
 sdk/wren-langchain/src/wren_langchain/_format.py     # 修改：6 个格式化函数
 sdk/wren-langchain/tests/unit/test_format_budget.py  # 新增：25 个边界回归
-tools/g2_cases.py                                    # 冻结用例表（22 例 + 性能数据）
+tools/g2_cases.py                                    # 冻结用例表（23 例 + 性能数据）
 tools/reproduce_g2.py                                # 一键 before/after + 门槛 + 基准 + demo
 tools/demo_g2.py                                     # 真实 SDK/DuckDB 演示
 docs/G2-用例表与基线预期.md                            # 改代码前冻结的输入与预期

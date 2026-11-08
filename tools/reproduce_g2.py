@@ -341,7 +341,6 @@ def write_side(out_root: Path, side: str, module, observations: list[Observation
                 "json_ok": obs.json_error is None,
                 "json_error": obs.json_error,
                 "content_sha256": sha256_text(obs.content),
-                "elapsed_ms": round(obs.elapsed_ms, 3),
                 "checks": obs.checks,
                 "failed_checks": obs.failed,
                 "error": obs.error,
@@ -367,7 +366,6 @@ def write_side(out_root: Path, side: str, module, observations: list[Observation
                 "json_ok",
                 "content_sha256",
                 "failed_checks",
-                "elapsed_ms",
             ]
         )
         for rec in records:
@@ -383,7 +381,6 @@ def write_side(out_root: Path, side: str, module, observations: list[Observation
                     rec["json_ok"],
                     rec["content_sha256"],
                     ";".join(rec["failed_checks"]),
-                    rec["elapsed_ms"],
                 ]
             )
     return records

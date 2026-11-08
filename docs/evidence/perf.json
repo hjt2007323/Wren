@@ -6,9 +6,9 @@
       "columns": 6,
       "before": {
         "runs": 30,
-        "min_ms": 27.972,
-        "median_ms": 29.115,
-        "max_ms": 43.276,
+        "min_ms": 28.744,
+        "median_ms": 29.976,
+        "max_ms": 40.529,
         "content_bytes": 14759,
         "rows_shown": 120,
         "warnings": [
@@ -17,9 +17,9 @@
       },
       "after": {
         "runs": 30,
-        "min_ms": 9.462,
-        "median_ms": 10.132,
-        "max_ms": 11.164,
+        "min_ms": 9.425,
+        "median_ms": 9.787,
+        "max_ms": 11.611,
         "content_bytes": 16353,
         "rows_shown": 139,
         "warnings": [
@@ -32,9 +32,9 @@
       "columns": 3,
       "before": {
         "runs": 30,
-        "min_ms": 2.359,
-        "median_ms": 2.496,
-        "max_ms": 2.976,
+        "min_ms": 2.397,
+        "median_ms": 2.577,
+        "max_ms": 3.158,
         "content_bytes": 14851,
         "rows_shown": 318,
         "warnings": [
@@ -43,9 +43,9 @@
       },
       "after": {
         "runs": 30,
-        "min_ms": 1.689,
-        "median_ms": 1.817,
-        "max_ms": 2.751,
+        "min_ms": 1.646,
+        "median_ms": 1.833,
+        "max_ms": 2.15,
         "content_bytes": 16383,
         "rows_shown": 349,
         "warnings": [
@@ -58,18 +58,18 @@
       "columns": 3,
       "before": {
         "runs": 30,
-        "min_ms": 0.143,
-        "median_ms": 0.151,
-        "max_ms": 0.195,
+        "min_ms": 0.14,
+        "median_ms": 0.149,
+        "max_ms": 0.359,
         "content_bytes": 9160,
         "rows_shown": 200,
         "warnings": []
       },
       "after": {
         "runs": 30,
-        "min_ms": 0.144,
-        "median_ms": 0.162,
-        "max_ms": 0.366,
+        "min_ms": 0.141,
+        "median_ms": 0.149,
+        "max_ms": 0.219,
         "content_bytes": 9160,
         "rows_shown": 200,
         "warnings": []

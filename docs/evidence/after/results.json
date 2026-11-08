@@ -36,7 +36,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "F4AD01F9E569E1BC7D60D3CDCD3D9E4E1CDC1D2AC7858C6F27330964A84299CC",
-      "elapsed_ms": 0.078,
       "checks": {
         "cap": true,
         "full_json": true,
@@ -59,7 +58,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "FFE256E8D81651DF5754CE44E6E0995573A59CC33E79FBA5988B115F1A3E792C",
-      "elapsed_ms": 0.037,
       "checks": {
         "cap": true,
         "full_json": true,
@@ -83,7 +81,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "259B1908B7E18A889836FE2356DB3CB3B6AA506395EB8125EA302C1AD45AABC5",
-      "elapsed_ms": 0.011,
       "checks": {
         "cap": true,
         "full_json": true,
@@ -107,7 +104,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "48594EC28C7B25F38CCE876656A39B416E57EAB4DF9CA9E102FEB43C5B71F2B6",
-      "elapsed_ms": 0.03,
       "checks": {
         "cap": true,
         "exact_cap": true
@@ -131,7 +127,6 @@
       "json_ok": false,
       "json_error": "Expecting value: line 1 column 1 (char 0)",
       "content_sha256": "94864C39695A1D787C5C7E829D0C23B152683E1D035FA92CDC0ED06E140450A4",
-      "elapsed_ms": 0.074,
       "checks": {
         "cap": true,
         "over_cap_truncated": true
@@ -155,7 +150,6 @@
       "json_ok": false,
       "json_error": "Expecting value: line 1 column 1 (char 0)",
       "content_sha256": "CCCE8A1E915B529ED8885B5B1FE7C4769757FC9064956DCE195209AC298C87E6",
-      "elapsed_ms": 0.08,
       "checks": {
         "cap": true,
         "single_row_diag": true
@@ -177,7 +171,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
-      "elapsed_ms": 0.006,
       "checks": {
         "cap": true,
         "empty_plain": true
@@ -201,7 +194,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "54B062ED1680EB4CC21E14282A5076914DBDCD513295CF21CDCEE1E9F6C11887",
-      "elapsed_ms": 0.005,
       "checks": {
         "cap": true,
         "empty_total_diag": true
@@ -225,7 +217,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "1497E64C82AF2DAD6B5359CE40DD7E88C42F16C703055252E54B14D7E38C88BF",
-      "elapsed_ms": 5.508,
       "checks": {
         "cap": true,
         "truncated_json": true,
@@ -250,7 +241,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "7FD6A6DCAD17AB4746D604C3317F7F0992040C3D41C16A7A917003AC74EAD934",
-      "elapsed_ms": 2.048,
       "checks": {
         "cap": true,
         "truncated_json": true,
@@ -274,7 +264,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "09CC44F36F6C36BA85FEAA47054CF48AA2E429C0ADEE3F967B0A949EAAF0310F",
-      "elapsed_ms": 0.021,
       "checks": {
         "cap": true,
         "full_json": true,
@@ -297,7 +286,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "E85E4761A5E07CA9905EAA7D11A37ADC6CC91B7F07F05997B6718C1DD1B2EFEC",
-      "elapsed_ms": 0.023,
       "checks": {
         "cap": true,
         "full_json": true,
@@ -321,7 +309,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "E5C3D4104EEA8846435DDE1DE2323F9CCB1AD17AA9B8400464909D03CF69A6E5",
-      "elapsed_ms": 0.001,
       "checks": {
         "cap": true,
         "no_truncation": true
@@ -343,7 +330,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "D3D34D5569FFF0641A1500AB4C7972341F79373CFA34C74F163B9E37812084E5",
-      "elapsed_ms": 0.026,
       "checks": {
         "cap": true,
         "dry_plan_marked": true
@@ -365,7 +351,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "A293C525A70A754D7AACFC9D19E3BC26E05DA22B835EE31788EC226EACC54EE2",
-      "elapsed_ms": 0.009,
       "checks": {
         "cap": true,
         "no_truncation": true
@@ -387,7 +372,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "3109C2A0E499BCDF55A3C6A40B6DF7C803ECE8A3B1F4B984DC8C115550A07560",
-      "elapsed_ms": 0.126,
       "checks": {
         "cap": true,
         "recall_capped": true
@@ -409,7 +393,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "06D4725FA55BA86598D3B250947AA1B92E8B59D5E1AD51D3E9D2EB81824521AA",
-      "elapsed_ms": 0.011,
       "checks": {
         "cap": true,
         "no_truncation": true
@@ -431,7 +414,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "4D34CC3B11F2096634393171800C8B651A7CFB710B831D25B2405399ACFB1C83",
-      "elapsed_ms": 0.232,
       "checks": {
         "cap": true,
         "models_capped": true
@@ -453,7 +435,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "1F087C1D2178D4A0B279EDB13450D2F431E1F9D5ECEE4E7AB02498D8BA918C60",
-      "elapsed_ms": 0.006,
       "checks": {
         "cap": true,
         "no_truncation": true
@@ -475,7 +456,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "6034E7EB0CECF3C38BA7103FC9904C364E909D68C3B8486A20CEAFD9DB6BAA82",
-      "elapsed_ms": 0.011,
       "checks": {
         "cap": true,
         "fetch_capped": true
@@ -497,7 +477,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "7A4CC2D3E577BFDFA52198785463B4D343DA0A1E79561D89201FFBE7118E48B4",
-      "elapsed_ms": 0.146,
       "checks": {
         "cap": true,
         "fetch_capped": true
@@ -519,7 +498,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "6BCA512F8163BDF496B52F67E562F605E9635F6BFAD80FA74438B40E2114BD7D",
-      "elapsed_ms": 0.004,
       "checks": {
         "cap": true,
         "store_exact": true
@@ -541,7 +519,6 @@
       "json_ok": true,
       "json_error": null,
       "content_sha256": "E0B4046A77D1B06D027BF04C6EF54ECC0856E1A304055AB9A138D61F04BFB743",
-      "elapsed_ms": 0.054,
       "checks": {
         "cap": true,
         "store_capped": true
