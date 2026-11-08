@@ -1,0 +1,1 @@
+(0 of 1 rows shown — a single row exceeds the 16384-byte content cap. Use SELECT to pick fewer / narrower columns, or aggregate in SQL.)

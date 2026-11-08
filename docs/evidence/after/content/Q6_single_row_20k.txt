@@ -1,0 +1,1 @@
+(0 of 1 rows shown — row 1 alone is 20012 bytes; with JSON framing it exceeds the 16384-byte cap. Use SELECT to pick fewer / narrower columns, or aggregate in SQL.)

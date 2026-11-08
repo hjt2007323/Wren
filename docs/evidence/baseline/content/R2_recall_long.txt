@@ -1,0 +1,400 @@
+1. "Question 0: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-0' GROUP BY city ORDER BY total DESC
+   ```
+2. "Question 1: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-1' GROUP BY city ORDER BY total DESC
+   ```
+3. "Question 2: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-2' GROUP BY city ORDER BY total DESC
+   ```
+4. "Question 3: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-3' GROUP BY city ORDER BY total DESC
+   ```
+5. "Question 4: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-4' GROUP BY city ORDER BY total DESC
+   ```
+6. "Question 5: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-5' GROUP BY city ORDER BY total DESC
+   ```
+7. "Question 6: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-6' GROUP BY city ORDER BY total DESC
+   ```
+8. "Question 7: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-7' GROUP BY city ORDER BY total DESC
+   ```
+9. "Question 8: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-8' GROUP BY city ORDER BY total DESC
+   ```
+10. "Question 9: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-9' GROUP BY city ORDER BY total DESC
+   ```
+11. "Question 10: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-10' GROUP BY city ORDER BY total DESC
+   ```
+12. "Question 11: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-11' GROUP BY city ORDER BY total DESC
+   ```
+13. "Question 12: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-12' GROUP BY city ORDER BY total DESC
+   ```
+14. "Question 13: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-13' GROUP BY city ORDER BY total DESC
+   ```
+15. "Question 14: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-14' GROUP BY city ORDER BY total DESC
+   ```
+16. "Question 15: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-15' GROUP BY city ORDER BY total DESC
+   ```
+17. "Question 16: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-16' GROUP BY city ORDER BY total DESC
+   ```
+18. "Question 17: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-17' GROUP BY city ORDER BY total DESC
+   ```
+19. "Question 18: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-18' GROUP BY city ORDER BY total DESC
+   ```
+20. "Question 19: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-19' GROUP BY city ORDER BY total DESC
+   ```
+21. "Question 20: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-20' GROUP BY city ORDER BY total DESC
+   ```
+22. "Question 21: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-21' GROUP BY city ORDER BY total DESC
+   ```
+23. "Question 22: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-22' GROUP BY city ORDER BY total DESC
+   ```
+24. "Question 23: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-23' GROUP BY city ORDER BY total DESC
+   ```
+25. "Question 24: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-24' GROUP BY city ORDER BY total DESC
+   ```
+26. "Question 25: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-25' GROUP BY city ORDER BY total DESC
+   ```
+27. "Question 26: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-26' GROUP BY city ORDER BY total DESC
+   ```
+28. "Question 27: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-27' GROUP BY city ORDER BY total DESC
+   ```
+29. "Question 28: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-28' GROUP BY city ORDER BY total DESC
+   ```
+30. "Question 29: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-29' GROUP BY city ORDER BY total DESC
+   ```
+31. "Question 30: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-30' GROUP BY city ORDER BY total DESC
+   ```
+32. "Question 31: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-31' GROUP BY city ORDER BY total DESC
+   ```
+33. "Question 32: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-32' GROUP BY city ORDER BY total DESC
+   ```
+34. "Question 33: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-33' GROUP BY city ORDER BY total DESC
+   ```
+35. "Question 34: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-34' GROUP BY city ORDER BY total DESC
+   ```
+36. "Question 35: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-35' GROUP BY city ORDER BY total DESC
+   ```
+37. "Question 36: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-36' GROUP BY city ORDER BY total DESC
+   ```
+38. "Question 37: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-37' GROUP BY city ORDER BY total DESC
+   ```
+39. "Question 38: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-38' GROUP BY city ORDER BY total DESC
+   ```
+40. "Question 39: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-39' GROUP BY city ORDER BY total DESC
+   ```
+41. "Question 40: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-40' GROUP BY city ORDER BY total DESC
+   ```
+42. "Question 41: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-41' GROUP BY city ORDER BY total DESC
+   ```
+43. "Question 42: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-42' GROUP BY city ORDER BY total DESC
+   ```
+44. "Question 43: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-43' GROUP BY city ORDER BY total DESC
+   ```
+45. "Question 44: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-44' GROUP BY city ORDER BY total DESC
+   ```
+46. "Question 45: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-45' GROUP BY city ORDER BY total DESC
+   ```
+47. "Question 46: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-46' GROUP BY city ORDER BY total DESC
+   ```
+48. "Question 47: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-47' GROUP BY city ORDER BY total DESC
+   ```
+49. "Question 48: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-48' GROUP BY city ORDER BY total DESC
+   ```
+50. "Question 49: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-49' GROUP BY city ORDER BY total DESC
+   ```
+51. "Question 50: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-50' GROUP BY city ORDER BY total DESC
+   ```
+52. "Question 51: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-51' GROUP BY city ORDER BY total DESC
+   ```
+53. "Question 52: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-52' GROUP BY city ORDER BY total DESC
+   ```
+54. "Question 53: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-53' GROUP BY city ORDER BY total DESC
+   ```
+55. "Question 54: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-54' GROUP BY city ORDER BY total DESC
+   ```
+56. "Question 55: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-55' GROUP BY city ORDER BY total DESC
+   ```
+57. "Question 56: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-56' GROUP BY city ORDER BY total DESC
+   ```
+58. "Question 57: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-57' GROUP BY city ORDER BY total DESC
+   ```
+59. "Question 58: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-58' GROUP BY city ORDER BY total DESC
+   ```
+60. "Question 59: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-59' GROUP BY city ORDER BY total DESC
+   ```
+61. "Question 60: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-60' GROUP BY city ORDER BY total DESC
+   ```
+62. "Question 61: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-61' GROUP BY city ORDER BY total DESC
+   ```
+63. "Question 62: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-62' GROUP BY city ORDER BY total DESC
+   ```
+64. "Question 63: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-63' GROUP BY city ORDER BY total DESC
+   ```
+65. "Question 64: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-64' GROUP BY city ORDER BY total DESC
+   ```
+66. "Question 65: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-65' GROUP BY city ORDER BY total DESC
+   ```
+67. "Question 66: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-66' GROUP BY city ORDER BY total DESC
+   ```
+68. "Question 67: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-67' GROUP BY city ORDER BY total DESC
+   ```
+69. "Question 68: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-68' GROUP BY city ORDER BY total DESC
+   ```
+70. "Question 69: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-69' GROUP BY city ORDER BY total DESC
+   ```
+71. "Question 70: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-70' GROUP BY city ORDER BY total DESC
+   ```
+72. "Question 71: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-71' GROUP BY city ORDER BY total DESC
+   ```
+73. "Question 72: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-72' GROUP BY city ORDER BY total DESC
+   ```
+74. "Question 73: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-73' GROUP BY city ORDER BY total DESC
+   ```
+75. "Question 74: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-74' GROUP BY city ORDER BY total DESC
+   ```
+76. "Question 75: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-75' GROUP BY city ORDER BY total DESC
+   ```
+77. "Question 76: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-76' GROUP BY city ORDER BY total DESC
+   ```
+78. "Question 77: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-77' GROUP BY city ORDER BY total DESC
+   ```
+79. "Question 78: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-78' GROUP BY city ORDER BY total DESC
+   ```
+80. "Question 79: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-79' GROUP BY city ORDER BY total DESC
+   ```
+81. "Question 80: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-80' GROUP BY city ORDER BY total DESC
+   ```
+82. "Question 81: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-81' GROUP BY city ORDER BY total DESC
+   ```
+83. "Question 82: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-82' GROUP BY city ORDER BY total DESC
+   ```
+84. "Question 83: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-83' GROUP BY city ORDER BY total DESC
+   ```
+85. "Question 84: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-84' GROUP BY city ORDER BY total DESC
+   ```
+86. "Question 85: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-85' GROUP BY city ORDER BY total DESC
+   ```
+87. "Question 86: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-86' GROUP BY city ORDER BY total DESC
+   ```
+88. "Question 87: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-87' GROUP BY city ORDER BY total DESC
+   ```
+89. "Question 88: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-88' GROUP BY city ORDER BY total DESC
+   ```
+90. "Question 89: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-89' GROUP BY city ORDER BY total DESC
+   ```
+91. "Question 90: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-90' GROUP BY city ORDER BY total DESC
+   ```
+92. "Question 91: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-91' GROUP BY city ORDER BY total DESC
+   ```
+93. "Question 92: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-92' GROUP BY city ORDER BY total DESC
+   ```
+94. "Question 93: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-93' GROUP BY city ORDER BY total DESC
+   ```
+95. "Question 94: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-94' GROUP BY city ORDER BY total DESC
+   ```
+96. "Question 95: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-95' GROUP BY city ORDER BY total DESC
+   ```
+97. "Question 96: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-96' GROUP BY city ORDER BY total DESC
+   ```
+98. "Question 97: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-97' GROUP BY city ORDER BY total DESC
+   ```
+99. "Question 98: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-98' GROUP BY city ORDER BY total DESC
+   ```
+100. "Question 99: 统计每个城市的订单数量并按金额排序（示例自然语言问题，用于 recall 长输出）。"
+   ```sql
+   SELECT city, count(*) AS orders, sum(amount) AS total FROM orders WHERE city <> 'city-99' GROUP BY city ORDER BY total DESC
+   ```

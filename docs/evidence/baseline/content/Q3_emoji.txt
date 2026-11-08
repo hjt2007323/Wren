@@ -1,0 +1,1 @@
+[{"emoji": "\ud83d\ude00"}, {"emoji": "\ud83c\udf89"}, {"emoji": "\ud83d\ude80"}]

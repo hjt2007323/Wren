@@ -1,0 +1,4 @@
+| model | cols | description |
+|---|---|---|
+| orders | 2 | Customer orders |
+| customers | 1 |  |

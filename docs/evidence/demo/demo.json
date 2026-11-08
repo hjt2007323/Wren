@@ -1,0 +1,69 @@
+{
+  "python": "3.11.15",
+  "cap_bytes": 16384,
+  "workdir": "C:\\Users\\Asus\\AppData\\Local\\Temp\\g2-demo-wy9odbp9",
+  "steps": {
+    "wren_query_small_zh": {
+      "content_bytes": 552,
+      "cap_ok": true,
+      "warnings": [],
+      "head": "[{\"id\": 0, \"city\": \"上海\", \"note\": \"订单备注 0：客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。\"}, {\"id\": 1, \"city\": \"北京\", \"note\": \"订单备注 1：客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。\"}, {\"id\": 2, \"city\": \"深圳\", \"note\": \"订单备注 2：客户要求尽快发",
+      "tail": "city\": \"北京\", \"note\": \"订单备注 1：客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。\"}, {\"id\": 2, \"city\": \"深圳\", \"note\": \"订单备注 2：客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。\"}]",
+      "ok": true,
+      "row_count": 3,
+      "error": null
+    },
+    "wren_query_400_rows": {
+      "content_bytes": 16231,
+      "cap_ok": true,
+      "warnings": [
+        "content truncated: showed 87 of 400 rows due to size cap"
+      ],
+      "head": "[{\"id\": 0, \"city\": \"上海\", \"note\": \"订单备注 0：客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。\"}, {\"id\": 1, \"city\": \"北京\", \"note\": \"订单备注 1：客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。\"}, {\"id\": 2, \"city\": \"深圳\", \"note\": \"订单备注 2：客户要求尽快发",
+      "tail": "装。\"}, {\"id\": 86, \"city\": \"北京\", \"note\": \"订单备注 86：客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。客户要求尽快发货，注意包装。\"}]\\n(showing 87 of 400 rows — content truncated to the 16384-byte cap)",
+      "ok": true,
+      "rows_shown": 87,
+      "rows_total": 400,
+      "footer": "(showing 87 of 400 rows — content truncated to the 16384-byte cap)",
+      "first_row_chinese_readable": true,
+      "escaped_unicode": false
+    },
+    "wren_dry_plan_long_sql": {
+      "content_bytes": 16344,
+      "cap_ok": true,
+      "warnings": [],
+      "head": "```sql\\nWITH orders AS (SELECT \"wren_src_orders\".\"id\" AS id, \"wren_src_orders\".city AS city FROM (SELECT orders.city, orders.\"id\" FROM (SELECT __source.city AS city, __source.\"id\" AS \"id\" FROM \"sample\".\"main\".orders AS __",
+      "tail": "1', '城市1212', '城市1213', '城市1214', '城市1215', '城市1216', '城市1217', '城市1218', '城\\n```\\n\\n[truncated: incomplete SQL — 16251 of 27180 bytes shown; do not execute as-is]",
+      "ok": true,
+      "incomplete_marked": true,
+      "dialect_sql_bytes": 27180,
+      "baseline_same_sql_bytes": 27191,
+      "baseline_marked": false
+    },
+    "wren_list_models": {
+      "content_bytes": 104,
+      "cap_ok": true,
+      "warnings": [],
+      "head": "| model | cols | description |\\n|---|---|---|\\n| orders | 4 | 演示订单表（中文城市与备注） |",
+      "tail": "| model | cols | description |\\n|---|---|---|\\n| orders | 4 | 演示订单表（中文城市与备注） |"
+    }
+  },
+  "cleanup": {
+    "workdir_removed": true
+  },
+  "tools": [
+    "wren_dry_plan",
+    "wren_list_models",
+    "wren_query"
+  ],
+  "duckdb_rows": 400,
+  "baseline_same_table": {
+    "content_bytes": 13658,
+    "cap_ok": true,
+    "rows_shown": 41,
+    "warnings": [
+      "content truncated: showed 41 of 400 rows due to size cap"
+    ]
+  },
+  "same_table_delta_rows": 46
+}

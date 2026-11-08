@@ -1,0 +1,2 @@
+1. [model] orders — Orders table
+2. [column] orders.id — Primary key

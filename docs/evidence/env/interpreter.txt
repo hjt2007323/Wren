@@ -1,0 +1,5 @@
+﻿3.11.15 | packaged by Anaconda, Inc. | (main, Jun 11 2026, 15:12:53) [MSC v.1942 64 bit (AMD64)]
+D:\Codex\Projects\github-upgrades\_envs\g2\python.exe
+pyarrow 26.0.1
+duckdb 2.0.0
+Windows-10-10.0.26200-SP0

@@ -1,0 +1,1 @@
+[{"text": "line1\nline2", "sym": "```sql", "pipe": "| a | b |"}, {"text": "tab\there", "sym": "back\\slash", "pipe": "quote \" and '"}, {"text": "crlf\r\nend", "sym": "back\\slash2", "pipe": "ascii only"}]

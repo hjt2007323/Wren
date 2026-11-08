@@ -1,0 +1,553 @@
+{
+  "side": "after",
+  "module": {
+    "path": "D:\\Codex\\Projects\\github-upgrades\\wren-tool-output-budget\\sdk\\wren-langchain\\src\\wren_langchain\\_format.py",
+    "sha256": "9351536F201B3FDD8F5F5738DDCB547D109614C1FCB5C3B22B88EDA1CAEC3818"
+  },
+  "environment": {
+    "python": "3.11.15",
+    "python_executable": "D:\\Codex\\Projects\\github-upgrades\\_envs\\g2\\python.exe",
+    "pyarrow": "26.0.1",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "cap_bytes": 16384,
+    "modules": {
+      "before": {
+        "path": "D:\\Codex\\Projects\\github-upgrades\\wren-tool-output-budget\\docs\\evidence\\baseline\\upstream_format_548eee3e.py",
+        "sha256": "CEA7814ED569C223E1D5C997197020EF5C4A719DBD3121C32128F5B882B355C4"
+      },
+      "after": {
+        "path": "D:\\Codex\\Projects\\github-upgrades\\wren-tool-output-budget\\sdk\\wren-langchain\\src\\wren_langchain\\_format.py",
+        "sha256": "9351536F201B3FDD8F5F5738DDCB547D109614C1FCB5C3B22B88EDA1CAEC3818"
+      }
+    }
+  },
+  "cases": [
+    {
+      "case": "Q1_en_short",
+      "tool": "query",
+      "note": "正向控制：3 行英文，未超限，输出应与上游逐字节一致",
+      "utf8_bytes": 82,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": 3,
+      "rows_total": 3,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "F4AD01F9E569E1BC7D60D3CDCD3D9E4E1CDC1D2AC7858C6F27330964A84299CC",
+      "elapsed_ms": 0.078,
+      "checks": {
+        "cap": true,
+        "full_json": true,
+        "no_truncation": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "Q2_zh_10",
+      "tool": "query",
+      "note": "10 行中文：上游 \\uXXXX 转义，修后应为可读 UTF-8",
+      "utf8_bytes": 650,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": 10,
+      "rows_total": 10,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "FFE256E8D81651DF5754CE44E6E0995573A59CC33E79FBA5988B115F1A3E792C",
+      "elapsed_ms": 0.037,
+      "checks": {
+        "cap": true,
+        "full_json": true,
+        "no_truncation": true,
+        "zh_readable": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "Q3_emoji",
+      "tool": "query",
+      "note": "emoji：上游代理对转义 12 B，修后 4 B",
+      "utf8_bytes": 57,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": 3,
+      "rows_total": 3,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "259B1908B7E18A889836FE2356DB3CB3B6AA506395EB8125EA302C1AD45AABC5",
+      "elapsed_ms": 0.011,
+      "checks": {
+        "cap": true,
+        "full_json": true,
+        "no_truncation": true,
+        "emoji_readable": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "Q4_cap_exact",
+      "tool": "query",
+      "note": "恰好 16384 B 必须放行，不得截断",
+      "utf8_bytes": 16384,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": 1,
+      "rows_total": 1,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "48594EC28C7B25F38CCE876656A39B416E57EAB4DF9CA9E102FEB43C5B71F2B6",
+      "elapsed_ms": 0.03,
+      "checks": {
+        "cap": true,
+        "exact_cap": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "Q5_cap_over_1",
+      "tool": "query",
+      "note": "16385 B：必须截断且总字节 <= 16384",
+      "utf8_bytes": 166,
+      "over_cap": false,
+      "warnings": [
+        "content truncated: row 1 alone is 16383 bytes; with JSON framing it exceeds the 16384-byte cap, no rows shown."
+      ],
+      "truncated": true,
+      "rows_shown": null,
+      "rows_total": 1,
+      "footer": "",
+      "json_ok": false,
+      "json_error": "Expecting value: line 1 column 1 (char 0)",
+      "content_sha256": "94864C39695A1D787C5C7E829D0C23B152683E1D035FA92CDC0ED06E140450A4",
+      "elapsed_ms": 0.074,
+      "checks": {
+        "cap": true,
+        "over_cap_truncated": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "Q6_single_row_20k",
+      "tool": "query",
+      "note": "单行 20 KB：必须明确 0 of 1 的原因，不能只回 []",
+      "utf8_bytes": 166,
+      "over_cap": false,
+      "warnings": [
+        "content truncated: row 1 alone is 20012 bytes; with JSON framing it exceeds the 16384-byte cap, no rows shown."
+      ],
+      "truncated": true,
+      "rows_shown": null,
+      "rows_total": 1,
+      "footer": "",
+      "json_ok": false,
+      "json_error": "Expecting value: line 1 column 1 (char 0)",
+      "content_sha256": "CCCE8A1E915B529ED8885B5B1FE7C4769757FC9064956DCE195209AC298C87E6",
+      "elapsed_ms": 0.08,
+      "checks": {
+        "cap": true,
+        "single_row_diag": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "Q7_empty_plain",
+      "tool": "query",
+      "note": "普通空表（0 行 0 列之外：1 列 0 行）：应返回 [] 且无尾注",
+      "utf8_bytes": 2,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": 0,
+      "rows_total": 0,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+      "elapsed_ms": 0.006,
+      "checks": {
+        "cap": true,
+        "empty_plain": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "Q8_empty_total_100",
+      "tool": "query",
+      "note": "空表 + total_rows=100：上游只回 [] 且无 warning，修后必须说明 0 of 100",
+      "utf8_bytes": 97,
+      "over_cap": false,
+      "warnings": [
+        "query returned 0 rows but total_rows=100; no rows to display"
+      ],
+      "truncated": true,
+      "rows_shown": 0,
+      "rows_total": 100,
+      "footer": "(0 of 100 rows: the query returned no rows; total_rows=100 is an external count, not row data)",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "54B062ED1680EB4CC21E14282A5076914DBDCD513295CF21CDCEE1E9F6C11887",
+      "elapsed_ms": 0.005,
+      "checks": {
+        "cap": true,
+        "empty_total_diag": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "Q9_5000_rows",
+      "tool": "query",
+      "note": "5000 短行：验证最大有序前缀与字节利用率",
+      "utf8_bytes": 16381,
+      "over_cap": false,
+      "warnings": [
+        "content truncated: showed 268 of 5000 rows due to size cap"
+      ],
+      "truncated": true,
+      "rows_shown": 268,
+      "rows_total": 5000,
+      "footer": "(showing 268 of 5000 rows — content truncated to the 16384-byte cap)",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "1497E64C82AF2DAD6B5359CE40DD7E88C42F16C703055252E54B14D7E38C88BF",
+      "elapsed_ms": 5.508,
+      "checks": {
+        "cap": true,
+        "truncated_json": true,
+        "maximal_prefix": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "Q10_zh_1000",
+      "tool": "query",
+      "note": "1000 行中文：修后同字节预算应保留更多行",
+      "utf8_bytes": 16313,
+      "over_cap": false,
+      "warnings": [
+        "content truncated: showed 224 of 1000 rows due to size cap"
+      ],
+      "truncated": true,
+      "rows_shown": 224,
+      "rows_total": 1000,
+      "footer": "(showing 224 of 1000 rows — content truncated to the 16384-byte cap)",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "7FD6A6DCAD17AB4746D604C3317F7F0992040C3D41C16A7A917003AC74EAD934",
+      "elapsed_ms": 2.048,
+      "checks": {
+        "cap": true,
+        "truncated_json": true,
+        "maximal_prefix": true,
+        "zh_kept": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "Q11_special_chars",
+      "tool": "query",
+      "note": "换行/围栏/表格/引号/反斜杠（纯 ASCII）：JSON 原样往返，且应与上游逐字节一致",
+      "utf8_bytes": 205,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": 3,
+      "rows_total": 3,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "09CC44F36F6C36BA85FEAA47054CF48AA2E429C0ADEE3F967B0A949EAAF0310F",
+      "elapsed_ms": 0.021,
+      "checks": {
+        "cap": true,
+        "full_json": true,
+        "data_intact": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "Q12_special_zh",
+      "tool": "query",
+      "note": "中文/emoji 与特殊字符混排：可读 UTF-8，JSON 仍原样往返",
+      "utf8_bytes": 225,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": 3,
+      "rows_total": 3,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "E85E4761A5E07CA9905EAA7D11A37ADC6CC91B7F07F05997B6718C1DD1B2EFEC",
+      "elapsed_ms": 0.023,
+      "checks": {
+        "cap": true,
+        "full_json": true,
+        "data_intact": true,
+        "zh_readable": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "D1_dry_short",
+      "tool": "dry_plan",
+      "note": "正常 SQL：围栏输出应与上游一致",
+      "utf8_bytes": 78,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": null,
+      "rows_total": 0,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "E5C3D4104EEA8846435DDE1DE2323F9CCB1AD17AA9B8400464909D03CF69A6E5",
+      "elapsed_ms": 0.001,
+      "checks": {
+        "cap": true,
+        "no_truncation": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "D2_dry_huge",
+      "tool": "dry_plan",
+      "note": "超长 SQL：必须截断并标明不完整，不能静默冒充完整 SQL",
+      "utf8_bytes": 16346,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": null,
+      "rows_total": 0,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "D3D34D5569FFF0641A1500AB4C7972341F79373CFA34C74F163B9E37812084E5",
+      "elapsed_ms": 0.026,
+      "checks": {
+        "cap": true,
+        "dry_plan_marked": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "R1_recall_short",
+      "tool": "recall",
+      "note": "2 条召回：输出应与上游一致",
+      "utf8_bytes": 117,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": null,
+      "rows_total": 0,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "A293C525A70A754D7AACFC9D19E3BC26E05DA22B835EE31788EC226EACC54EE2",
+      "elapsed_ms": 0.009,
+      "checks": {
+        "cap": true,
+        "no_truncation": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "R2_recall_long",
+      "tool": "recall",
+      "note": "100 条长召回：上游无上限，修后统一 cap 并标明截断",
+      "utf8_bytes": 16183,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": null,
+      "rows_total": 0,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "3109C2A0E499BCDF55A3C6A40B6DF7C803ECE8A3B1F4B984DC8C115550A07560",
+      "elapsed_ms": 0.126,
+      "checks": {
+        "cap": true,
+        "recall_capped": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "L1_models_short",
+      "tool": "list_models",
+      "note": "2 个模型：输出应与上游一致",
+      "utf8_bytes": 98,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": null,
+      "rows_total": 0,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "06D4725FA55BA86598D3B250947AA1B92E8B59D5E1AD51D3E9D2EB81824521AA",
+      "elapsed_ms": 0.011,
+      "checks": {
+        "cap": true,
+        "no_truncation": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "L2_models_long",
+      "tool": "list_models",
+      "note": "300 个模型：上游无上限，修后统一 cap",
+      "utf8_bytes": 16347,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": null,
+      "rows_total": 0,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "4D34CC3B11F2096634393171800C8B651A7CFB710B831D25B2405399ACFB1C83",
+      "elapsed_ms": 0.232,
+      "checks": {
+        "cap": true,
+        "models_capped": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "F1_fetch_short",
+      "tool": "fetch_context",
+      "note": "短检索结果：输出应与上游一致",
+      "utf8_bytes": 72,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": null,
+      "rows_total": 0,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "1F087C1D2178D4A0B279EDB13450D2F431E1F9D5ECEE4E7AB02498D8BA918C60",
+      "elapsed_ms": 0.006,
+      "checks": {
+        "cap": true,
+        "no_truncation": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "F2_fetch_schema_long",
+      "tool": "fetch_context",
+      "note": "长 schema：上游已按字节截断（正向控制）",
+      "utf8_bytes": 16384,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": null,
+      "rows_total": 0,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "6034E7EB0CECF3C38BA7103FC9904C364E909D68C3B8486A20CEAFD9DB6BAA82",
+      "elapsed_ms": 0.011,
+      "checks": {
+        "cap": true,
+        "fetch_capped": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "F3_fetch_items_long",
+      "tool": "fetch_context",
+      "note": "200 条检索项：修后按整行截断并说明省略数量",
+      "utf8_bytes": 16315,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": null,
+      "rows_total": 0,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "7A4CC2D3E577BFDFA52198785463B4D343DA0A1E79561D89201FFBE7118E48B4",
+      "elapsed_ms": 0.146,
+      "checks": {
+        "cap": true,
+        "fetch_capped": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "S1_store_short",
+      "tool": "store",
+      "note": "正常 store：输出应与上游逐字节一致",
+      "utf8_bytes": 43,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": null,
+      "rows_total": 0,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "6BCA512F8163BDF496B52F67E562F605E9635F6BFAD80FA74438B40E2114BD7D",
+      "elapsed_ms": 0.004,
+      "checks": {
+        "cap": true,
+        "store_exact": true
+      },
+      "failed_checks": [],
+      "error": null
+    },
+    {
+      "case": "S2_store_long",
+      "tool": "store",
+      "note": "超长 nl：上游不设限，修后也纳入统一预算",
+      "utf8_bytes": 16382,
+      "over_cap": false,
+      "warnings": [],
+      "truncated": false,
+      "rows_shown": null,
+      "rows_total": 0,
+      "footer": "",
+      "json_ok": true,
+      "json_error": null,
+      "content_sha256": "E0B4046A77D1B06D027BF04C6EF54ECC0856E1A304055AB9A138D61F04BFB743",
+      "elapsed_ms": 0.054,
+      "checks": {
+        "cap": true,
+        "store_capped": true
+      },
+      "failed_checks": [],
+      "error": null
+    }
+  ]
+}

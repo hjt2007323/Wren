@@ -1,0 +1,8 @@
+1. "List orders"
+   ```sql
+   SELECT 1
+   ```
+2. "Count customers"
+   ```sql
+   SELECT count(*) FROM customers
+   ```

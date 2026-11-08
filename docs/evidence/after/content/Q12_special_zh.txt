@@ -1,0 +1,1 @@
+[{"text": "中文\n换行", "sym": "```sql", "pipe": "| 城市 | 订单 |"}, {"text": "emoji 😀🎉", "sym": "tab\there", "pipe": "引号 \" 和 '"}, {"text": "crlf\r\n中文", "sym": "back\\slash", "pipe": "混合 mixed"}]

@@ -1,0 +1,1 @@
+[{"text": "\u4e2d\u6587\n\u6362\u884c", "sym": "```sql", "pipe": "| \u57ce\u5e02 | \u8ba2\u5355 |"}, {"text": "emoji \ud83d\ude00\ud83c\udf89", "sym": "tab\there", "pipe": "\u5f15\u53f7 \" \u548c '"}, {"text": "crlf\r\n\u4e2d\u6587", "sym": "back\\slash", "pipe": "\u6df7\u5408 mixed"}]

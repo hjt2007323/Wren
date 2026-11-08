@@ -1,0 +1,3 @@
+```sql
+WITH cte_orders AS (SELECT id FROM orders) SELECT * FROM cte_orders
+```

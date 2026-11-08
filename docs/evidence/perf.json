@@ -1,0 +1,81 @@
+{
+  "repeat": 30,
+  "datasets": {
+    "over_cap_5000": {
+      "rows": 5000,
+      "columns": 6,
+      "before": {
+        "runs": 30,
+        "min_ms": 27.972,
+        "median_ms": 29.115,
+        "max_ms": 43.276,
+        "content_bytes": 14759,
+        "rows_shown": 120,
+        "warnings": [
+          "content truncated: showed 120 of 5000 rows due to size cap"
+        ]
+      },
+      "after": {
+        "runs": 30,
+        "min_ms": 9.462,
+        "median_ms": 10.132,
+        "max_ms": 11.164,
+        "content_bytes": 16353,
+        "rows_shown": 139,
+        "warnings": [
+          "content truncated: showed 139 of 5000 rows due to size cap"
+        ]
+      }
+    },
+    "over_cap_1000": {
+      "rows": 1000,
+      "columns": 3,
+      "before": {
+        "runs": 30,
+        "min_ms": 2.359,
+        "median_ms": 2.496,
+        "max_ms": 2.976,
+        "content_bytes": 14851,
+        "rows_shown": 318,
+        "warnings": [
+          "content truncated: showed 318 of 1000 rows due to size cap"
+        ]
+      },
+      "after": {
+        "runs": 30,
+        "min_ms": 1.689,
+        "median_ms": 1.817,
+        "max_ms": 2.751,
+        "content_bytes": 16383,
+        "rows_shown": 349,
+        "warnings": [
+          "content truncated: showed 349 of 1000 rows due to size cap"
+        ]
+      }
+    },
+    "under_cap_200": {
+      "rows": 200,
+      "columns": 3,
+      "before": {
+        "runs": 30,
+        "min_ms": 0.143,
+        "median_ms": 0.151,
+        "max_ms": 0.195,
+        "content_bytes": 9160,
+        "rows_shown": 200,
+        "warnings": []
+      },
+      "after": {
+        "runs": 30,
+        "min_ms": 0.144,
+        "median_ms": 0.162,
+        "max_ms": 0.366,
+        "content_bytes": 9160,
+        "rows_shown": 200,
+        "warnings": []
+      }
+    }
+  },
+  "python": "3.11.15",
+  "pyarrow": "26.0.1"
+}
