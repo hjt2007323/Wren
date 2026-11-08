@@ -1,0 +1,999 @@
+"""Unit tests for CTERewriter — no database required."""
+
+from __future__ import annotations
+
+import base64
+from copy import deepcopy
+
+import duckdb
+import orjson
+import pytest
+import sqlglot
+
+from wren.config import WrenConfig
+from wren.engine import WrenEngine
+from wren.mdl import get_session_context
+from wren.mdl.cte_rewriter import CTERewriter, get_sqlglot_dialect
+from wren.model.data_source import DataSource
+from wren.model.error import ErrorCode, WrenError
+
+pytestmark = pytest.mark.unit
+
+# ---------------------------------------------------------------------------
+# Manifests
+# ---------------------------------------------------------------------------
+
+_SINGLE_MODEL_MANIFEST = {
+    "catalog": "wren",
+    "schema": "public",
+    "models": [
+        {
+            "name": "orders",
+            "tableReference": {"schema": "main", "table": "orders"},
+            "columns": [
+                {"name": "o_orderkey", "type": "integer"},
+                {"name": "o_custkey", "type": "integer"},
+                {"name": "o_orderstatus", "type": "varchar"},
+                {
+                    "name": "order_cust_key",
+                    "type": "varchar",
+                    "expression": "concat(cast(o_orderkey as varchar), '_', cast(o_custkey as varchar))",
+                },
+            ],
+            "primaryKey": "o_orderkey",
+        }
+    ],
+}
+
+_MULTI_MODEL_MANIFEST = {
+    "catalog": "wren",
+    "schema": "public",
+    "models": [
+        {
+            "name": "orders",
+            "tableReference": {"schema": "main", "table": "orders"},
+            "columns": [
+                {"name": "o_orderkey", "type": "integer"},
+                {"name": "o_custkey", "type": "integer"},
+                {"name": "o_orderstatus", "type": "varchar"},
+                {
+                    "name": "order_cust_key",
+                    "type": "varchar",
+                    "expression": "concat(cast(o_orderkey as varchar), '_', cast(o_custkey as varchar))",
+                },
+            ],
+            "primaryKey": "o_orderkey",
+        },
+        {
+            "name": "customer",
+            "tableReference": {"schema": "main", "table": "customer"},
+            "columns": [
+                {"name": "c_custkey", "type": "integer"},
+                {"name": "c_name", "type": "varchar"},
+            ],
+            "primaryKey": "c_custkey",
+        },
+    ],
+    "relationships": [
+        {
+            "name": "orders_customer",
+            "models": ["orders", "customer"],
+            "joinType": "many_to_one",
+            "condition": '"orders".o_custkey = "customer".c_custkey',
+        }
+    ],
+}
+
+
+_VIEW_MANIFEST = {
+    "catalog": "wren",
+    "schema": "public",
+    "models": _MULTI_MODEL_MANIFEST["models"],
+    "relationships": _MULTI_MODEL_MANIFEST["relationships"],
+    "views": [
+        {
+            "name": "orders_with_customer",
+            "statement": (
+                "SELECT o.o_orderkey, o.o_orderstatus, c.c_name "
+                'FROM "orders" o JOIN "customer" c ON o.o_custkey = c.c_custkey'
+            ),
+        }
+    ],
+}
+
+
+def _b64(manifest: dict) -> str:
+    return base64.b64encode(orjson.dumps(manifest)).decode()
+
+
+def _make_rewriter(
+    manifest: dict,
+    data_source: DataSource = DataSource.duckdb,
+    *,
+    fallback: bool = False,
+) -> CTERewriter:
+    manifest_str = _b64(manifest)
+    session = get_session_context(manifest_str, None, None, data_source.name)
+    return CTERewriter(manifest_str, session, data_source, fallback=fallback)
+
+
+class _RecordingSessionContext:
+    """Wraps a real session context, recording every SQL string handed to
+    ``transform_sql`` so a test can see whether a model was sent as a bare
+    ``SELECT *`` (CLAC-controlled) or an explicit column list."""
+
+    def __init__(self, inner):
+        self._inner = inner
+        self.calls: list[str] = []
+
+    def transform_sql(self, sql: str) -> str:
+        self.calls.append(sql)
+        return self._inner.transform_sql(sql)
+
+    def __getattr__(self, name):
+        return getattr(self._inner, name)
+
+
+# ---------------------------------------------------------------------------
+# Helper: parse and check CTE presence
+# ---------------------------------------------------------------------------
+
+
+def _has_cte(sql: str, cte_name: str, dialect: str = "duckdb") -> bool:
+    """Return True if *sql* contains a CTE named *cte_name*."""
+    ast = sqlglot.parse_one(sql, dialect=dialect)
+    with_clause = ast.args.get("with_")
+    if not with_clause:
+        return False
+    for cte in with_clause.expressions:
+        alias = cte.args.get("alias")
+        if alias and alias.this.name == cte_name:
+            return True
+    return False
+
+
+def _count_ctes(sql: str, dialect: str = "duckdb") -> int:
+    ast = sqlglot.parse_one(sql, dialect=dialect)
+    with_clause = ast.args.get("with_")
+    if not with_clause:
+        return 0
+    return len(with_clause.expressions)
+
+
+def _cte_body_sql(sql: str, cte_name: str, dialect: str = "duckdb") -> str | None:
+    """Return the SQL body of a named CTE, or None if not found."""
+    ast = sqlglot.parse_one(sql, dialect=dialect)
+    with_clause = ast.args.get("with_")
+    if not with_clause:
+        return None
+    for cte in with_clause.expressions:
+        alias = cte.args.get("alias")
+        if alias and alias.this.name == cte_name:
+            return cte.this.sql(dialect=dialect)
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Tests: basic model resolution
+# ---------------------------------------------------------------------------
+
+
+class TestSingleModel:
+    def test_single_model_generates_cte(self):
+        rw = _make_rewriter(_SINGLE_MODEL_MANIFEST)
+        result = rw.rewrite('SELECT o_orderkey FROM "orders" LIMIT 1')
+        assert _has_cte(result, "orders")
+        assert isinstance(result, str)
+        assert len(result) > 0
+
+    def test_star_not_expanded(self):
+        """SELECT * should pass star to wren-core so all columns are included."""
+        rw = _make_rewriter(_SINGLE_MODEL_MANIFEST)
+        result = rw.rewrite('SELECT * FROM "orders"')
+        assert _has_cte(result, "orders")
+        cte_body = _cte_body_sql(result, "orders")
+        assert cte_body is not None
+        # wren-core expands SELECT * into all model columns — verify every
+        # non-hidden, non-relationship column is present in the CTE body.
+        body_lower = cte_body.lower()
+        for col_name in ("o_orderkey", "o_custkey", "o_orderstatus", "order_cust_key"):
+            assert col_name.lower() in body_lower, (
+                f"Expected column {col_name!r} in CTE body: {cte_body}"
+            )
+
+    def test_alias_resolution(self):
+        rw = _make_rewriter(_SINGLE_MODEL_MANIFEST)
+        result = rw.rewrite('SELECT o.o_orderkey FROM "orders" o')
+        assert _has_cte(result, "orders")
+
+    def test_calculated_column(self):
+        rw = _make_rewriter(_SINGLE_MODEL_MANIFEST)
+        result = rw.rewrite('SELECT order_cust_key FROM "orders"')
+        assert _has_cte(result, "orders")
+        # The CTE should contain the expanded expression
+        assert "concat" in result.lower() or "||" in result.lower()
+
+
+class TestMultiModel:
+    def test_join_generates_two_ctes(self):
+        rw = _make_rewriter(_MULTI_MODEL_MANIFEST)
+        result = rw.rewrite(
+            "SELECT o.o_orderkey, c.c_name "
+            'FROM "orders" o JOIN "customer" c ON o.o_custkey = c.c_custkey'
+        )
+        assert _has_cte(result, "orders")
+        assert _has_cte(result, "customer")
+        assert _count_ctes(result) >= 2
+
+    def test_qualified_star_not_expanded(self):
+        """SELECT table.* should pass star to wren-core so all columns appear."""
+        rw = _make_rewriter(_MULTI_MODEL_MANIFEST)
+        result = rw.rewrite('SELECT "orders".* FROM "orders"')
+        assert _has_cte(result, "orders")
+        cte_body = _cte_body_sql(result, "orders")
+        assert cte_body is not None
+        body_lower = cte_body.lower()
+        for col_name in ("o_orderkey", "o_custkey", "o_orderstatus", "order_cust_key"):
+            assert col_name.lower() in body_lower, (
+                f"Expected column {col_name!r} in CTE body: {cte_body}"
+            )
+
+    def test_mixed_star_and_explicit_columns(self):
+        """orders.* should include all columns; customer CTE only referenced ones."""
+        rw = _make_rewriter(_MULTI_MODEL_MANIFEST)
+        result = rw.rewrite(
+            'SELECT "orders".*, c.c_name '
+            'FROM "orders" JOIN "customer" c ON "orders".o_custkey = c.c_custkey'
+        )
+        assert _has_cte(result, "orders")
+        assert _has_cte(result, "customer")
+        # orders used star → all columns present
+        orders_body = _cte_body_sql(result, "orders")
+        assert orders_body is not None
+        orders_lower = orders_body.lower()
+        for col_name in ("o_orderkey", "o_custkey", "o_orderstatus", "order_cust_key"):
+            assert col_name.lower() in orders_lower
+        # customer used explicit column → only c_name (not necessarily c_custkey
+        # in the select list, though it may appear in the subquery structure)
+        customer_body = _cte_body_sql(result, "customer")
+        assert customer_body is not None
+        assert "c_name" in customer_body.lower()
+
+
+class TestScopedAliases:
+    """Verify alias reuse preserves model columns across SQL scopes."""
+
+    @pytest.fixture
+    def database(self):
+        """Provide local tables for executing rewritten regression queries."""
+        with duckdb.connect() as connection:
+            connection.execute(
+                "CREATE TABLE orders (o_orderkey INTEGER, o_custkey INTEGER, "
+                "o_orderstatus VARCHAR); "
+                "INSERT INTO orders VALUES (1, 10, 'O'), (2, 20, 'F'); "
+                "CREATE TABLE customer (c_custkey INTEGER, c_name VARCHAR); "
+                "INSERT INTO customer VALUES (10, 'Alice'), (20, 'Bob')"
+            )
+            yield connection
+
+    @pytest.mark.parametrize("operator", ["UNION ALL", "INTERSECT", "EXCEPT"])
+    @pytest.mark.parametrize(
+        "data_source",
+        [
+            DataSource.duckdb,
+            DataSource.postgres,
+            DataSource.oracle,
+            DataSource.snowflake,
+        ],
+    )
+    def test_alias_reused_in_set_operation(self, database, operator, data_source):
+        """Each set-operation branch binds its own alias in every dialect."""
+        sql = (
+            f"SELECT t.o_custkey FROM orders t {operator} "
+            "SELECT t.c_custkey FROM customer t"
+        )
+        rewritten = _make_rewriter(_MULTI_MODEL_MANIFEST, data_source).rewrite(sql)
+        duckdb_sql = sqlglot.transpile(
+            rewritten, read=get_sqlglot_dialect(data_source), write="duckdb"
+        )[0]
+        assert sorted(database.execute(duckdb_sql).fetchall()) == sorted(
+            database.execute(sql).fetchall()
+        )
+
+    def test_alias_reused_in_independent_subquery(self, database):
+        """An inner alias must not replace the outer query's model binding."""
+        sql = (
+            "SELECT t.o_orderkey FROM orders t WHERE EXISTS "
+            "(SELECT 1 FROM customer t WHERE t.c_name = 'Alice')"
+        )
+        rewritten = _make_rewriter(_MULTI_MODEL_MANIFEST).rewrite(sql)
+        assert database.execute(rewritten).fetchall() == [(1,), (2,)]
+
+    @pytest.mark.parametrize(
+        "sql",
+        [
+            "SELECT t.order_id FROM (SELECT t.o_orderkey AS order_id FROM orders t) t",
+            "WITH summary AS (SELECT t.o_orderkey AS order_id FROM orders t) "
+            "SELECT t.order_id FROM summary t",
+        ],
+    )
+    def test_alias_reused_for_derived_source(self, database, sql):
+        """A derived table or CTE exposes its output columns under its alias."""
+        rewritten = _make_rewriter(_MULTI_MODEL_MANIFEST).rewrite(sql)
+        assert database.execute(rewritten).fetchall() == [(1,), (2,)]
+
+    def test_correlated_reference_keeps_outer_scope(self, database):
+        """A correlated column still belongs to the outer model's scope."""
+        sql = (
+            "SELECT t.o_orderkey FROM orders t WHERE EXISTS "
+            "(SELECT 1 FROM customer c WHERE c.c_custkey = t.o_custkey)"
+        )
+        rewritten = _make_rewriter(_MULTI_MODEL_MANIFEST).rewrite(sql)
+        assert database.execute(rewritten).fetchall() == [(1,), (2,)]
+
+    def test_qualified_star_uses_its_own_scope(self, database):
+        """A qualified star expands the outer model despite an inner alias."""
+        rw = _make_rewriter(_MULTI_MODEL_MANIFEST)
+        rw.session_context = _RecordingSessionContext(rw.session_context)
+        sql = "SELECT t.* FROM orders t WHERE EXISTS (SELECT t.c_name FROM customer t)"
+        rewritten = rw.rewrite(sql)
+        assert 'SELECT * FROM "orders"' in rw.session_context.calls
+        assert 'SELECT * FROM "customer"' not in rw.session_context.calls
+        assert database.execute(rewritten).fetchall() == [
+            (1, 10, "O", "1_10"),
+            (2, 20, "F", "2_20"),
+        ]
+
+    def test_nested_star_routes_model_through_star_expansion(self, database):
+        """A star inside a derived table reaches wren-core as SELECT *."""
+        rw = _make_rewriter(_MULTI_MODEL_MANIFEST)
+        rw.session_context = _RecordingSessionContext(rw.session_context)
+        rewritten = rw.rewrite("SELECT x.o_orderkey FROM (SELECT t.* FROM orders t) x")
+        assert 'SELECT * FROM "orders"' in rw.session_context.calls
+        assert database.execute(rewritten).fetchall() == [(1,), (2,)]
+
+
+class TestUnionStarDetection:
+    """A star anywhere in a UNION/INTERSECT/EXCEPT must route that model
+    through wren-core as ``SELECT *`` (so CLAC controls column visibility),
+    not as an explicit column list, no matter which branch it is in."""
+
+    def test_star_in_second_union_branch_still_routes_through_wren_core(self):
+        rw = _make_rewriter(_SINGLE_MODEL_MANIFEST)
+        rw.session_context = _RecordingSessionContext(rw.session_context)
+        rw.rewrite('SELECT o_orderkey FROM "orders" UNION ALL SELECT * FROM "orders"')
+        assert any(
+            s.strip() == 'SELECT * FROM "orders"' for s in rw.session_context.calls
+        ), (
+            f"expected a bare SELECT * transform_sql call, got: {rw.session_context.calls}"
+        )
+
+    def test_star_in_first_union_branch_still_detected(self):
+        rw = _make_rewriter(_SINGLE_MODEL_MANIFEST)
+        rw.session_context = _RecordingSessionContext(rw.session_context)
+        rw.rewrite('SELECT * FROM "orders" UNION ALL SELECT o_orderkey FROM "orders"')
+        assert any(
+            s.strip() == 'SELECT * FROM "orders"' for s in rw.session_context.calls
+        ), (
+            f"expected a bare SELECT * transform_sql call, got: {rw.session_context.calls}"
+        )
+
+    def test_plain_query_star_still_detected(self):
+        rw = _make_rewriter(_SINGLE_MODEL_MANIFEST)
+        rw.session_context = _RecordingSessionContext(rw.session_context)
+        rw.rewrite('SELECT * FROM "orders"')
+        assert any(
+            s.strip() == 'SELECT * FROM "orders"' for s in rw.session_context.calls
+        ), (
+            f"expected a bare SELECT * transform_sql call, got: {rw.session_context.calls}"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Tests: CTE edge cases
+# ---------------------------------------------------------------------------
+
+
+class TestCTEVisibility:
+    """CTE declarations shadow models and views only where they are visible."""
+
+    @pytest.fixture
+    def manifest(self):
+        """Use distinct physical names so a missed model expansion cannot pass."""
+        manifest = deepcopy(_VIEW_MANIFEST)
+        for model in manifest["models"]:
+            model["tableReference"]["table"] = f"raw_{model['name']}"
+        return manifest
+
+    @pytest.fixture
+    def database(self):
+        """Provide only physical tables, never the semantic model names."""
+        with duckdb.connect() as connection:
+            connection.execute(
+                "CREATE TABLE raw_orders (o_orderkey INTEGER, o_custkey INTEGER, "
+                "o_orderstatus VARCHAR); "
+                "INSERT INTO raw_orders VALUES (1, 10, 'O'), (2, 20, 'F'); "
+                "CREATE TABLE raw_customer (c_custkey INTEGER, c_name VARCHAR); "
+                "INSERT INTO raw_customer VALUES (10, 'Alice'), (20, 'Bob')"
+            )
+            yield connection
+
+    @pytest.mark.parametrize("strict", [False, True])
+    def test_nested_cte_does_not_shadow_outer_model(self, manifest, database, strict):
+        """Default engine planning still expands the independently bound model."""
+        engine = WrenEngine(
+            _b64(manifest), DataSource.duckdb, {}, config=WrenConfig(strict_mode=strict)
+        )
+        sql = (
+            "SELECT o.o_orderkey, c.c_name FROM orders o "
+            "JOIN customer c ON o.o_custkey = c.c_custkey "
+            "WHERE EXISTS (WITH orders AS (SELECT 99 AS id) SELECT 1 FROM orders) "
+            "ORDER BY o.o_orderkey"
+        )
+        assert database.execute(engine.dry_plan(sql)).fetchall() == [
+            (1, "Alice"),
+            (2, "Bob"),
+        ]
+
+    def test_cte_in_sibling_union_branch_does_not_shadow_model(
+        self, manifest, database
+    ):
+        """A branch-local CTE must not hide a model used by another branch."""
+        sql = (
+            "(WITH orders AS (SELECT 99 AS o_orderkey) SELECT o_orderkey FROM orders) "
+            "UNION ALL SELECT o_orderkey FROM orders"
+        )
+        planned = _make_rewriter(manifest).rewrite(sql)
+        assert sorted(database.execute(planned).fetchall()) == [(1,), (2,), (99,)]
+
+    @pytest.mark.parametrize(
+        "sql, expected",
+        [
+            ("WITH orders AS (SELECT 99 AS id) SELECT id FROM orders", [(99,)]),
+            (
+                "WITH Orders AS (SELECT 99 AS id) SELECT id FROM orders",
+                [(99,)],
+            ),
+            (
+                "SELECT c_name FROM customer WHERE EXISTS "
+                "(WITH orders AS (SELECT 99 AS id) SELECT 1 FROM orders) ORDER BY c_name",
+                [("Alice",), ("Bob",)],
+            ),
+            (
+                "WITH RECURSIVE orders(id) AS (SELECT 1 UNION ALL "
+                "SELECT id + 1 FROM orders WHERE id < 3) SELECT id FROM orders",
+                [(1,), (2,), (3,)],
+            ),
+        ],
+    )
+    def test_visible_cte_still_shadows_model(self, manifest, database, sql, expected):
+        """Ordinary, mixed-case, nested and recursive CTE bindings remain intact."""
+        planned = _make_rewriter(manifest).rewrite(sql)
+        assert database.execute(planned).fetchall() == expected
+
+    @pytest.mark.parametrize(
+        "sql",
+        [
+            "WITH orders AS (SELECT o_orderkey FROM orders) SELECT * FROM orders",
+            "WITH orders AS (SELECT orders.o_orderkey FROM orders) "
+            "SELECT orders.o_orderkey FROM orders",
+        ],
+    )
+    def test_nonrecursive_cte_can_read_same_named_model(self, manifest, database, sql):
+        """A nonrecursive CTE is not visible within its own definition."""
+        planned = _make_rewriter(manifest).rewrite(sql)
+        assert database.execute(planned).fetchall() == [(1,), (2,)]
+
+    def test_generated_cte_does_not_capture_an_existing_source(
+        self, manifest, database
+    ):
+        """The replacement name must not shadow an unrelated physical table."""
+        database.execute(
+            "CREATE TABLE wren_model_orders (id INTEGER); "
+            "INSERT INTO wren_model_orders VALUES (100)"
+        )
+        sql = (
+            "WITH orders AS (SELECT o_orderkey FROM orders) "
+            "SELECT o.o_orderkey, t.id FROM orders o "
+            "CROSS JOIN wren_model_orders t ORDER BY o.o_orderkey"
+        )
+        planned = _make_rewriter(manifest).rewrite(sql)
+        assert database.execute(planned).fetchall() == [(1, 100), (2, 100)]
+
+    def test_later_cte_does_not_shadow_an_earlier_definition(self, manifest, database):
+        """A later CTE name cannot hide the model referenced by an earlier CTE."""
+        sql = (
+            "WITH summary AS (SELECT o_orderkey FROM orders), "
+            "orders AS (SELECT 99 AS o_orderkey) SELECT * FROM summary"
+        )
+        planned = _make_rewriter(manifest).rewrite(sql)
+        assert database.execute(planned).fetchall() == [(1,), (2,)]
+
+    def test_nested_cte_does_not_shadow_outer_view(self, manifest, database):
+        """View references follow the same visibility rules as model references."""
+        sql = (
+            "SELECT o_orderkey FROM orders_with_customer WHERE EXISTS "
+            "(WITH orders_with_customer AS (SELECT 99 AS id) "
+            "SELECT 1 FROM orders_with_customer) ORDER BY o_orderkey"
+        )
+        planned = _make_rewriter(manifest).rewrite(sql)
+        assert database.execute(planned).fetchall() == [(1,), (2,)]
+
+    def test_nested_cte_inside_view_does_not_hide_its_model(self, manifest, database):
+        """Model usage collection for a view also respects nested CTE scopes."""
+        manifest["views"][0]["statement"] = (
+            "SELECT o_orderkey FROM orders WHERE EXISTS "
+            "(WITH orders AS (SELECT 99 AS id) SELECT 1 FROM orders)"
+        )
+        planned = _make_rewriter(manifest).rewrite(
+            "SELECT o_orderkey FROM orders_with_customer ORDER BY o_orderkey"
+        )
+        assert database.execute(planned).fetchall() == [(1,), (2,)]
+
+    def test_user_cte_does_not_replace_a_views_model(self, manifest, database):
+        """A model CTE needed by a view must not collide with a user CTE."""
+        sql = (
+            "WITH orders AS (SELECT 99 AS o_orderkey) "
+            "SELECT o_orderkey FROM orders_with_customer ORDER BY o_orderkey"
+        )
+        planned = _make_rewriter(manifest).rewrite(sql)
+        assert database.execute(planned).fetchall() == [(1,), (2,)]
+
+    def test_nested_cte_does_not_turn_external_table_into_passthrough(self, manifest):
+        """An unresolved outer table still follows the configured fallback path."""
+        sql = (
+            "SELECT * FROM external WHERE EXISTS "
+            "(WITH external AS (SELECT 1 AS id) SELECT 1 FROM external)"
+        )
+        with pytest.raises(ValueError, match="No model or view references found"):
+            _make_rewriter(manifest, fallback=False).rewrite(sql)
+
+    @pytest.mark.parametrize("table", ["main.orders", "memory.main.orders"])
+    @pytest.mark.parametrize(
+        "sql, expected",
+        [
+            (
+                "WITH orders AS (SELECT 99 AS o_orderkey) "
+                "SELECT o_orderkey FROM {table}",
+                [(80,)],
+            ),
+            (
+                "WITH orders AS (SELECT 99 AS o_orderkey) SELECT extra FROM {table}",
+                [(800,)],
+            ),
+            (
+                "WITH orders AS (SELECT extra FROM {table}) SELECT extra FROM orders",
+                [(800,)],
+            ),
+            (
+                "WITH orders AS (SELECT 99 AS o_orderkey) "
+                "SELECT p.extra, c.c_name FROM {table} p CROSS JOIN customer c "
+                "WHERE c.c_custkey = 10",
+                [(800, "Alice")],
+            ),
+        ],
+    )
+    def test_qualified_physical_table_keeps_its_binding(
+        self, manifest, database, table, sql, expected
+    ):
+        """A qualified physical source cannot bind to a same-named model CTE."""
+        database.execute(
+            "CREATE TABLE orders (o_orderkey INTEGER, extra INTEGER); "
+            "INSERT INTO orders VALUES (80, 800)"
+        )
+        planned = _make_rewriter(manifest).rewrite(sql.format(table=table))
+        assert database.execute(planned).fetchall() == expected
+
+
+class TestCTEEdgeCases:
+    def test_user_cte_references_model(self):
+        """User CTE that references a model — model CTE should be prepended."""
+        rw = _make_rewriter(_SINGLE_MODEL_MANIFEST)
+        result = rw.rewrite(
+            'WITH summary AS (SELECT o_orderkey FROM "orders") SELECT * FROM summary'
+        )
+        assert _has_cte(result, "orders")
+        assert _has_cte(result, "summary")
+        # Model CTE should come before user CTE
+        ast = sqlglot.parse_one(result, dialect="duckdb")
+        cte_names = [
+            cte.args["alias"].this.name for cte in ast.args["with_"].expressions
+        ]
+        assert cte_names.index("orders") < cte_names.index("summary")
+
+    def test_user_cte_shadows_model(self):
+        """User CTE with same name as model — no model CTE generated for that name."""
+        rw = _make_rewriter(_SINGLE_MODEL_MANIFEST, fallback=True)
+        result = rw.rewrite("WITH orders AS (SELECT 1 AS id) SELECT * FROM orders")
+        # The model name is shadowed by user CTE, so CTERewriter skips it
+        # and falls back to session_context.transform_sql which processes
+        # the whole query (wren-core handles user CTEs natively).
+        assert isinstance(result, str)
+        # No model-generated CTE named "orders" should be present
+        # (wren-core may restructure the query but won't add a model CTE)
+        assert not _has_cte(result, "orders") or _count_ctes(result) <= 1
+
+    def test_user_cte_shadows_model_case_insensitive(self):
+        """User CTE 'Orders' (mixed case) should shadow model 'orders'."""
+        rw = _make_rewriter(_SINGLE_MODEL_MANIFEST, fallback=True)
+        result = rw.rewrite(
+            "WITH Orders AS (SELECT 1 AS o_orderkey, 'OPEN' AS o_orderstatus) "
+            "SELECT * FROM Orders"
+        )
+        ast = sqlglot.parse_one(result, dialect="duckdb")
+        with_clause = ast.args.get("with_")
+        if with_clause:
+            cte_names = [cte.args["alias"].this.name for cte in with_clause.expressions]
+            orders_count = sum(1 for n in cte_names if n.lower() == "orders")
+            assert orders_count <= 1, f"Duplicate 'orders' CTE: {result}"
+
+    def test_nested_cte_shadows_model(self):
+        """CTE defined in a subquery WITH should also shadow the model name."""
+        rw = _make_rewriter(_MULTI_MODEL_MANIFEST, fallback=True)
+        result = rw.rewrite(
+            "SELECT * FROM orders WHERE o_custkey IN ("
+            "  WITH customer AS (SELECT 1 AS c_custkey) "
+            "  SELECT c_custkey FROM customer"
+            ")"
+        )
+        # "customer" is shadowed by the nested CTE — only "orders" should
+        # get a model CTE, not "customer".
+        assert _has_cte(result, "orders")
+        assert not _has_cte(result, "customer")
+
+    def test_recursive_cte_preserved(self):
+        """WITH RECURSIVE keyword should be preserved after model CTE injection."""
+        rw = _make_rewriter(_MULTI_MODEL_MANIFEST)
+        result = rw.rewrite(
+            "WITH RECURSIVE hierarchy AS ("
+            '  SELECT o_orderkey, o_custkey FROM "orders" WHERE o_custkey = 1'
+            "  UNION ALL"
+            '  SELECT o.o_orderkey, o.o_custkey FROM "orders" o'
+            "  JOIN hierarchy h ON o.o_custkey = h.o_orderkey"
+            ") SELECT * FROM hierarchy"
+        )
+        assert _has_cte(result, "orders")
+        assert _has_cte(result, "hierarchy")
+        # RECURSIVE keyword must be preserved
+        ast = sqlglot.parse_one(result, dialect="duckdb")
+        assert ast.args["with_"].args.get("recursive")
+
+    @pytest.mark.parametrize(
+        ("sql", "data_source"),
+        [
+            ("SELECT 1", DataSource.postgres),
+            ("SELECT 1 + 1 AS two", DataSource.postgres),
+            ("SELECT CURRENT_DATE", DataSource.postgres),
+            # Oracle forces identifier quoting (identify=True) on output; the
+            # passthrough must still round-trip a scalar query cleanly.
+            ("SELECT 1", DataSource.oracle),
+            # A pure inline-row STRUCT spine — no model reference.
+            (
+                "SELECT stage, sort_order FROM UNNEST(["
+                "STRUCT('Prospecting' AS stage, 1 AS sort_order), "
+                "('Qualification', 2), ('Proposal', 3)])",
+                DataSource.bigquery,
+            ),
+        ],
+    )
+    def test_scalar_or_pure_tvf_passes_through(self, sql, data_source):
+        """SQL with no model/view reference is passed through, never rejected."""
+        rw = _make_rewriter(_SINGLE_MODEL_MANIFEST, data_source, fallback=True)
+        out = rw.rewrite(sql)
+
+        # Nothing to expand — no model CTE is injected.
+        assert "with" not in out.lower()
+        # It round-trips to the same AST in the target dialect.
+        dialect = get_sqlglot_dialect(data_source)
+        assert sqlglot.parse_one(out, dialect=dialect) == sqlglot.parse_one(
+            sql, dialect=dialect
+        )
+
+    def test_scalar_passes_through_without_fallback(self):
+        """Pure scalar SQL passes through even when fallback is disabled."""
+        rw = _make_rewriter(_SINGLE_MODEL_MANIFEST, fallback=False)
+        out = rw.rewrite("SELECT 1")
+        assert "with" not in out.lower()
+
+    def test_unresolved_table_raises_without_fallback(self):
+        """A non-model table reference raises when fallback is disabled.
+
+        Only pure scalar / TVF SQL passes through unconditionally; a table
+        reference that resolves to no MDL model or view is still a rewriter
+        miss and must surface, not be silently passed on.
+        """
+        rw = _make_rewriter(_SINGLE_MODEL_MANIFEST, fallback=False)
+        with pytest.raises(ValueError):
+            rw.rewrite("SELECT * FROM unknown_table")
+
+
+# ---------------------------------------------------------------------------
+# Tests: correlated subquery (the key fix)
+# ---------------------------------------------------------------------------
+
+
+class TestCorrelatedSubquery:
+    def test_exists_subquery(self):
+        """Correlated subquery with EXISTS — both models should get CTEs."""
+        rw = _make_rewriter(_MULTI_MODEL_MANIFEST)
+        result = rw.rewrite(
+            'SELECT * FROM "orders" WHERE EXISTS '
+            '(SELECT 1 FROM "customer" WHERE c_custkey = o_custkey)'
+        )
+        assert _has_cte(result, "orders")
+        assert _has_cte(result, "customer")
+
+
+# ---------------------------------------------------------------------------
+# Tests: MDL views
+# ---------------------------------------------------------------------------
+
+
+class TestView:
+    def test_view_only_query(self):
+        """A view-only query expands the view as a verbatim CTE, plus the
+        model CTEs the view statement references."""
+        rw = _make_rewriter(_VIEW_MANIFEST)
+        result = rw.rewrite('SELECT o_orderkey FROM "orders_with_customer"')
+        assert _has_cte(result, "orders_with_customer")
+        assert _has_cte(result, "orders")
+        assert _has_cte(result, "customer")
+
+    def test_model_ctes_precede_view_cte(self):
+        """The models a view references must be defined before the view CTE."""
+        rw = _make_rewriter(_VIEW_MANIFEST)
+        result = rw.rewrite('SELECT c_name FROM "orders_with_customer"')
+        ast = sqlglot.parse_one(result, dialect="duckdb")
+        cte_names = [
+            cte.args["alias"].this.name for cte in ast.args["with_"].expressions
+        ]
+        view_idx = cte_names.index("orders_with_customer")
+        assert cte_names.index("orders") < view_idx
+        assert cte_names.index("customer") < view_idx
+
+    def test_view_body_kept_verbatim(self):
+        """The view CTE body is the native-SQL statement, not a wren-core
+        expansion — it still references the models by name and keeps the join."""
+        rw = _make_rewriter(_VIEW_MANIFEST)
+        result = rw.rewrite('SELECT c_name FROM "orders_with_customer"')
+        body = _cte_body_sql(result, "orders_with_customer")
+        assert body is not None
+        body_lower = body.lower()
+        assert "orders" in body_lower
+        assert "customer" in body_lower
+        assert "join" in body_lower
+
+    def test_view_select_star(self):
+        rw = _make_rewriter(_VIEW_MANIFEST)
+        result = rw.rewrite('SELECT * FROM "orders_with_customer"')
+        assert _has_cte(result, "orders_with_customer")
+        assert _has_cte(result, "orders")
+        assert _has_cte(result, "customer")
+
+    def test_view_join_model(self):
+        rw = _make_rewriter(_VIEW_MANIFEST)
+        result = rw.rewrite(
+            "SELECT v.c_name, o.o_orderstatus "
+            'FROM "orders_with_customer" v '
+            'JOIN "orders" o ON v.o_orderkey = o.o_orderkey'
+        )
+        assert _has_cte(result, "orders_with_customer")
+        assert _has_cte(result, "orders")
+        assert _has_cte(result, "customer")
+
+    def test_user_cte_references_view_and_model(self):
+        rw = _make_rewriter(_VIEW_MANIFEST)
+        result = rw.rewrite(
+            "WITH summary AS ("
+            "  SELECT v.c_name, o.o_orderkey "
+            '  FROM "orders_with_customer" v '
+            '  JOIN "orders" o ON v.o_orderkey = o.o_orderkey'
+            ") SELECT * FROM summary"
+        )
+        assert _has_cte(result, "orders_with_customer")
+        assert _has_cte(result, "orders")
+        assert _has_cte(result, "customer")
+        assert _has_cte(result, "summary")
+
+
+# ---------------------------------------------------------------------------
+# Tests: dialect mapping
+# ---------------------------------------------------------------------------
+
+
+class TestDialectMapping:
+    def test_postgres(self):
+        assert get_sqlglot_dialect(DataSource.postgres) == "postgres"
+
+    def test_mssql_maps_to_tsql(self):
+        assert get_sqlglot_dialect(DataSource.mssql) == "tsql"
+
+    def test_starrocks_uses_its_own_sqlglot_dialect(self):
+        # Doris and StarRocks differ in DATE_TRUNC argument order and in
+        # ARRAY_AGG / GROUP_CONCAT spelling, so StarRocks must not reuse "doris".
+        assert get_sqlglot_dialect(DataSource.starrocks) == "starrocks"
+        assert get_sqlglot_dialect(DataSource.doris) == "doris"
+
+    def test_starrocks_date_trunc_argument_order(self):
+        sql = "SELECT date_trunc('month', d) FROM t"
+        starrocks = get_sqlglot_dialect(DataSource.starrocks)
+        doris = get_sqlglot_dialect(DataSource.doris)
+        out = sqlglot.transpile(sql, read=starrocks, write=starrocks)[0]
+        assert out == "SELECT DATE_TRUNC('MONTH', d) FROM t"
+        # The doris dialect swaps the arguments, which StarRocks rejects.
+        out_doris = sqlglot.transpile(sql, read=doris, write=doris)[0]
+        assert out_doris == "SELECT DATE_TRUNC(d, 'MONTH') FROM t"
+
+    def test_canner_maps_to_trino(self):
+        assert get_sqlglot_dialect(DataSource.canner) == "trino"
+
+    def test_local_file_maps_to_duckdb(self):
+        assert get_sqlglot_dialect(DataSource.local_file) == "duckdb"
+
+
+# ---------------------------------------------------------------------------
+# Tests: case-insensitive column & model binding
+# ---------------------------------------------------------------------------
+
+_MIXED_CASE_COL_MANIFEST = {
+    "catalog": "wren",
+    "schema": "public",
+    "models": [
+        {
+            "name": "events",
+            "tableReference": {"schema": "main", "table": "events"},
+            "columns": [
+                {"name": "id", "type": "integer"},
+                {"name": "Amount", "type": "integer"},
+            ],
+            "primaryKey": "id",
+        }
+    ],
+}
+
+_MIXED_CASE_MODEL_MANIFEST = {
+    "catalog": "wren",
+    "schema": "public",
+    "models": [
+        {
+            "name": "CaseModel",
+            "tableReference": {"schema": "main", "table": "case_model"},
+            "columns": [{"name": "id", "type": "integer"}],
+            "primaryKey": "id",
+        }
+    ],
+}
+
+_CASE_COLLISION_MANIFEST = {
+    "catalog": "wren",
+    "schema": "public",
+    "models": [
+        {
+            "name": "clash",
+            "tableReference": {"schema": "main", "table": "clash"},
+            "columns": [
+                {"name": "Year", "type": "integer"},
+                {"name": "year", "type": "integer"},
+            ],
+        }
+    ],
+}
+
+
+class TestCaseSensitiveBinding:
+    def test_scoped_aliases_with_case_distinct_columns(self):
+        """Case-sensitive column collection keeps branch aliases separate."""
+        manifest = dict(
+            _CASE_COLLISION_MANIFEST,
+            models=_CASE_COLLISION_MANIFEST["models"]
+            + [_MULTI_MODEL_MANIFEST["models"][1]],
+        )
+        rw = _make_rewriter(manifest, DataSource.postgres)
+        rw.session_context = _RecordingSessionContext(rw.session_context)
+        rewritten = rw.rewrite(
+            'SELECT t."Year" FROM clash t UNION ALL SELECT t.c_custkey FROM customer t'
+        )
+        assert 'SELECT "clash"."Year" FROM "clash"' in rw.session_context.calls
+        assert (
+            'SELECT "customer"."c_custkey" FROM "customer"' in rw.session_context.calls
+        )
+        assert _has_cte(rewritten, "clash", dialect="postgres")
+        assert _has_cte(rewritten, "customer", dialect="postgres")
+
+    def test_force_identify_detected_from_dialect(self):
+        """Upper-folding dialects force-quote output; others do not."""
+        assert _make_rewriter(_SINGLE_MODEL_MANIFEST, DataSource.oracle)._force_identify
+        assert _make_rewriter(
+            _SINGLE_MODEL_MANIFEST, DataSource.snowflake
+        )._force_identify
+        assert not _make_rewriter(
+            _SINGLE_MODEL_MANIFEST, DataSource.postgres
+        )._force_identify
+        assert not _make_rewriter(
+            _SINGLE_MODEL_MANIFEST, DataSource.bigquery
+        )._force_identify
+
+    def test_case_only_column_collision_rejected_on_ci_dialect(self):
+        """Case-distinct columns are rejected on a case-insensitive dialect."""
+        with pytest.raises(WrenError) as exc:
+            _make_rewriter(_CASE_COLLISION_MANIFEST, DataSource.bigquery)
+        assert exc.value.error_code == ErrorCode.INVALID_MDL
+
+    def test_case_distinct_columns_allowed_on_case_sensitive_dialect(self):
+        """Postgres can hold case-distinct columns — build succeeds, refs bind."""
+        rw = _make_rewriter(_CASE_COLLISION_MANIFEST, DataSource.postgres)
+        assert rw._case_sensitive_columns
+        # Quoted refs select each case-distinct column exactly.
+        out = rw.rewrite('SELECT "Year", "year" FROM clash')
+        assert _has_cte(out, "clash", dialect="postgres")
+        assert "select 1" not in out.lower()
+
+    def test_quoted_wrong_case_column_rejected_on_case_sensitive_dialect(self):
+        """A quoted ref to a non-existent case variant fails loudly."""
+        rw = _make_rewriter(_CASE_COLLISION_MANIFEST, DataSource.postgres)
+        with pytest.raises(WrenError) as exc:
+            rw.rewrite('SELECT "YEAR" FROM clash')
+        assert exc.value.error_code == ErrorCode.INVALID_SQL
+
+    def test_ambiguous_unquoted_ref_rejected_on_case_sensitive_dialect(self):
+        """An unquoted ref matching multiple case-distinct columns is ambiguous."""
+        rw = _make_rewriter(_CASE_COLLISION_MANIFEST, DataSource.postgres)
+        with pytest.raises(WrenError) as exc:
+            rw.rewrite("SELECT YEAR FROM clash")
+        assert exc.value.error_code == ErrorCode.INVALID_SQL
+
+    def test_quoted_mixed_case_column_binds(self):
+        """A quoted mixed-case column reference binds to the model CTE."""
+        rw = _make_rewriter(_MIXED_CASE_COL_MANIFEST, DataSource.postgres)
+        out = rw.rewrite('SELECT "Amount" FROM events')
+        assert _has_cte(out, "events", dialect="postgres")
+        # The CTE exposes the column with the user's quoting and does not
+        # collapse to a column-less SELECT 1.
+        assert "Amount" in out
+        assert "select 1" not in out.lower()
+
+    def test_unquoted_mixed_case_column_binds(self):
+        """An unquoted mixed-case column reference binds via dialect folding."""
+        rw = _make_rewriter(_MIXED_CASE_COL_MANIFEST, DataSource.postgres)
+        out = rw.rewrite("SELECT Amount FROM events")
+        assert _has_cte(out, "events", dialect="postgres")
+        assert "select 1" not in out.lower()
+
+    def test_quoted_mixed_case_model_binds(self):
+        """A quoted mixed-case model name binds to its CTE (not SELECT 1)."""
+        rw = _make_rewriter(_MIXED_CASE_MODEL_MANIFEST, DataSource.postgres)
+        out = rw.rewrite('SELECT id FROM "CaseModel"')
+        assert _has_cte(out, "CaseModel", dialect="postgres")
+        assert "select 1" not in out.lower()
+
+    def test_quoting_does_not_leak_across_sources(self):
+        """A quoted same-name column elsewhere must not flip a model CTE alias.
+
+        ``events`` has a mixed-case ``Amount`` and is referenced unquoted; a
+        user CTE also exposes ``amount`` referenced quoted. Quoting is scoped
+        per model, so the ``events`` CTE still mirrors the unquoted reference
+        (``AS Amount``) and the user's ``e.Amount`` binds on Postgres — the
+        CTE's quoted ``"amount"`` does not force-quote it.
+        """
+        rw = _make_rewriter(_MIXED_CASE_COL_MANIFEST, DataSource.postgres)
+        out = rw.rewrite(
+            "WITH c AS (SELECT 1 AS amount) "
+            'SELECT e.Amount, c."amount" FROM events e JOIN c ON 1=1'
+        )
+        ast = sqlglot.parse_one(out, dialect="postgres")
+        events_cte = next(
+            cte for cte in ast.args["with_"].expressions if cte.alias == "events"
+        )
+        proj = events_cte.this.expressions[0]
+        assert isinstance(proj, sqlglot.exp.Alias)
+        assert not proj.args["alias"].quoted, (
+            f"events CTE alias should be unquoted (mirroring e.Amount), got: {out}"
+        )
+
+    def test_case_insensitive_ref_on_upper_folding_dialect(self):
+        """Oracle: a lower-case ref to a mixed-case column is canonicalized."""
+        rw = _make_rewriter(_MIXED_CASE_COL_MANIFEST, DataSource.oracle)
+        out = rw.rewrite("SELECT amount FROM events")
+        # Output is force-quoted; the manifest-case column survives.
+        assert "Amount" in out
+        assert "select 1" not in out.lower()

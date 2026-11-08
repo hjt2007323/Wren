@@ -1,0 +1,72 @@
+"""DuckDB unlimited query strips trailing semicolon like limit wrap."""
+
+from __future__ import annotations
+
+from threading import Lock
+from unittest.mock import MagicMock
+
+import pyarrow as pa
+import pytest
+
+from wren.connector.duckdb import DuckDBConnector
+
+pytestmark = pytest.mark.unit
+
+
+def test_unlimited_query_strips_trailing_semicolon():
+    """Strip final statement terminators even when no row limit is requested."""
+    connector = DuckDBConnector.__new__(DuckDBConnector)
+    connector.connection = MagicMock()
+    connector._connection_lock = Lock()
+    connector.connection.execute.return_value.to_arrow_table.return_value = pa.table(
+        {"x": [1]}
+    )
+
+    connector.query("SELECT 1 AS x;  ")
+
+    connector.connection.execute.assert_called_once_with("SELECT 1 AS x")
+
+
+def test_limited_query_still_wraps_after_strip():
+    """Apply the row limit after removing the trailing terminator."""
+    connector = DuckDBConnector.__new__(DuckDBConnector)
+    connector.connection = MagicMock()
+    connector._connection_lock = Lock()
+    connector.connection.execute.return_value.to_arrow_table.return_value = pa.table(
+        {"x": [1]}
+    )
+
+    connector.query("SELECT 1 AS x;", limit=2)
+
+    connector.connection.execute.assert_called_once_with(
+        "SELECT * FROM (\nSELECT 1 AS x\n) AS _q LIMIT 2"
+    )
+
+
+def test_query_limit_survives_trailing_line_comment():
+    """Trailing `--` must not eat the wrap (same shape as postgres.py #2728)."""
+    connector = DuckDBConnector.__new__(DuckDBConnector)
+    connector.connection = MagicMock()
+    connector._connection_lock = Lock()
+    connector.connection.execute.return_value.to_arrow_table.return_value = pa.table(
+        {"x": [1]}
+    )
+
+    connector.query("SELECT 1 AS x -- pick", limit=2)
+
+    connector.connection.execute.assert_called_once_with(
+        "SELECT * FROM (\nSELECT 1 AS x -- pick\n) AS _q LIMIT 2"
+    )
+
+
+def test_dry_run_survives_trailing_line_comment():
+    """Keep the validation wrapper outside a trailing SQL line comment."""
+    connector = DuckDBConnector.__new__(DuckDBConnector)
+    connector.connection = MagicMock()
+    connector._connection_lock = Lock()
+
+    connector.dry_run("SELECT 1 AS x -- pick")
+
+    connector.connection.execute.assert_called_once_with(
+        "SELECT * FROM (\nSELECT 1 AS x -- pick\n) AS _q LIMIT 0"
+    )
