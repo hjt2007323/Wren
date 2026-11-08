@@ -1,0 +1,68 @@
+{
+  "schema_version": "component-source-history-v1",
+  "date": "2026-11-08",
+  "repository": "hjt2007323/Wren",
+  "upstream": {
+    "url": "https://github.com/Canner/WrenAI",
+    "sha": "548eee3e864b11e7f11eee15ae82be178a295f22"
+  },
+  "initial_remote_head": "b540ad3fe83d575ac52f08d5920192c8565d6565",
+  "local_publication_head": "35f6e3e196f254a6f6f1711cb4663e3084790767",
+  "notice": "Remote commits were recreated through the connected GitHub API; every imported source snapshot retains its exact Git tree. Local and remote commit IDs differ.",
+  "snapshots": [
+    {
+      "local_sha": "6d5e83210dd1beee5fea0a90d4986b8efe8aa0ba",
+      "remote_sha": "dda64ed280dd57d33d6accee851c1f1aac5e3d78",
+      "tree_sha": "96520e51b9b7a9358ae5eb238dcd5b7abfd2984b",
+      "message": "chore: vendor WrenAI 548eee3e (sdk/** Apache-2.0) as upstream baseline"
+    },
+    {
+      "local_sha": "dfd90dedfe14ddd9ccf1056c3b1b15b37acddf4e",
+      "remote_sha": "32c50cb846bc93d73d1e42bbbad0d82c26f4c688",
+      "tree_sha": "e369c2ac02ec9343035a015c01bf88b61e8bef91",
+      "message": "feat(sdk): unify 16 KiB UTF-8 content budget across wren-langchain formatters"
+    },
+    {
+      "local_sha": "1a3480bdaa04fab7fc12765666c2d0112e045dc4",
+      "remote_sha": "cec4f7823ec4a0c4a31479f1d52a79ac77179e33",
+      "tree_sha": "934831cee9b69540fd534e19787cd4db7d487f45",
+      "message": "docs(g2): frozen case table, delivery receipt, evidence and interview notes"
+    },
+    {
+      "local_sha": "4e9f52350310eb089e1e971902757ad35beff348",
+      "remote_sha": "469e5077eb903f9f842ccdbd08db2f6f7b5ba0fc",
+      "tree_sha": "5a28641eecee98ad7ff1abe73bc8db197ecf68a4",
+      "message": "chore(g2): refresh evidence snapshot and align reported numbers"
+    },
+    {
+      "local_sha": "86b78d42742a53c4b6d2c5e621fc5a2d669f9961",
+      "remote_sha": "1ff77e4ac60877d4e2b9b5cecd83e30e629b40f6",
+      "tree_sha": "ed11f84f21731415ee7827a39f31eca176f81143",
+      "message": "docs(g2): add path/size/hash manifest for delivery artifacts"
+    },
+    {
+      "local_sha": "780e1d90f9b072847f171205100e593ba0c776bf",
+      "remote_sha": "7d259331dfbf8ac0757476e70b8a353f6eec838f",
+      "tree_sha": "d1a1ac222f94ad890d0bd239e585fb2c02d0bdff",
+      "message": "test(g2): add tool-level budget tests, red-run plugin and acceptance matrix"
+    },
+    {
+      "local_sha": "1b0a349252216e2e4e660a27140e903a77b4cece",
+      "remote_sha": "6da0610bf285901e4e3475cbeac5d53166ed323a",
+      "tree_sha": "f6f4c5f5ea9e48e865172b9ed621e24be8e2bb50",
+      "message": "docs(g2): record independent acceptance R1 and re-pin manifests"
+    },
+    {
+      "local_sha": "ab4df18057a5e4b3c3c4fc29e0f3aee0010d4264",
+      "remote_sha": "2943b5784ec8ba6559b15812b9fd8c2ed1683dd9",
+      "tree_sha": "c209b0c5250304142434d4942aab8d04e369cc01",
+      "message": "docs(g2): add monitoring-probe cross-check for the accepted build"
+    },
+    {
+      "local_sha": "35f6e3e196f254a6f6f1711cb4663e3084790767",
+      "remote_sha": "8e37a41b4b2e4a018d1bc71b0f5deef60d7f0b67",
+      "tree_sha": "beb5208724cbac26bf6294aa710176d9712086e0",
+      "message": "docs: prepare attributed component portfolio publication"
+    }
+  ]
+}

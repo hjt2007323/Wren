@@ -1,6 +1,6 @@
 # 个人展示版发布说明
 
-2026-11-08。本文件描述本地发布候选，是否上传及远端提交以外部发布记录为准。
+2026-11-08。公开仓库：https://github.com/hjt2007323/Wren 。版本及指纹映射见 [SOURCE-HISTORY.md](SOURCE-HISTORY.md)。
 
 - 交付源提交：`ab4df18057a5e4b3c3c4fc29e0f3aee0010d4264`。
 - 被验文件：`sdk/wren-langchain/src/wren_langchain/_format.py`，SHA256 `9351536f201b3fdd8f5f5738ddcb547d109614c1fcb5c3b22b88eda1caec3818`。
@@ -12,3 +12,5 @@
 - 本轮无付费模型调用，不连接 A07 数据库。上游原自动化配置归档保留，本展示版未新增 GitHub Actions 验收结论。
 
 - 发布副本复验发现 Windows 的全局换行设置把源码与基线转成 CRLF，测试行为未变但 SHA256 改变。新增 `.gitattributes` 固定 LF，并从原提交恢复源文件字节；原本带 CRLF 的上游文件例外保留。该修复不改产品逻辑。
+
+- 通过已连接的 GitHub API 逐一重建 9 个审核快照，每个文件树与本地相同；提交身份及时间不同，因此远端提交 ID 不与本地 ID 混用。初始仓库提交保留在远端历史中。

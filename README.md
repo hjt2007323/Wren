@@ -47,3 +47,5 @@ python tools/demo_g2.py
 - [一键对照](tools/reproduce_g2.py)
 
 **范围**：只限制格式化函数返回的 `content`，外层信封和 `data.rows` 不在上限内。未验证真实 LLM 效果、memory 向量检索或整个平台部署；组件性能不代表整体 Agent 延迟或模型费用。上游发行工作流归档于 `.github/upstream-workflows/`，本轮没有修改产品逻辑；新增 `.gitattributes` 固定发布副本行尾，防止 Windows 克隆改变源码及证据指纹。
+
+[本次改进的版本与提交映射](SOURCE-HISTORY.md)
