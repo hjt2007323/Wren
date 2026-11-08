@@ -7,6 +7,8 @@
 本仓库是上游全量快照 + 本次改动（来源与指纹见 [UPSTREAM.md](UPSTREAM.md)）。改动只在 `sdk/wren-langchain`，
 没有改 Rust core、pydantic SDK、依赖清单或数据库权限。
 
+**状态：独立验收 accepted（R1，2026-11-07；被验 `_format.py` = `9351536F201B…`，其后产品代码未变）。**
+
 ## 结果速览（同一数据、同一解释器、同一 pyarrow）
 
 | 场景 | 上游 | 本次 | 变化 |
