@@ -1,0 +1,14 @@
+# Keep source and evidence hashes stable in fresh clones on Windows.
+* text=auto eol=lf
+
+# Preserve original CRLF bytes already present in upstream Git objects.
+"/docs/evidence/after/results.csv" -text
+"/docs/evidence/baseline/results.csv" -text
+"/docs/evidence/demo/demo.json" -text
+"/docs/evidence/env/interpreter.txt" -text
+"/docs/evidence/env/packages.txt" -text
+"/docs/evidence/env/pip-freeze.txt" -text
+"/docs/evidence/manifest.md" -text
+"/docs/evidence/manifest.sha256" -text
+"/docs/evidence/perf.csv" -text
+"/docs/evidence/tests/probe-g2-monitoring-rerun.json" -text
